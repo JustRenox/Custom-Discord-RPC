@@ -1,6 +1,36 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+  background-color: #171717;
+  color: white
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+nav #buttons {
+  float: right;
+  width: 150px;
+  height: 100%;
+  line-height: 30px;
+  -webkit-app-region: no-drag;
+}
+
+nav #buttons #minimize, nav #buttons #maximize, nav #buttons #quit {
+  float: left;
+  height: 100%;
+  width: 33%;
+  text-align: center;
+  cursor: default;
+}
+
+nav #buttons #minimize:hover {
+  background-color: #333333aa;
+}
+
+nav #buttons #maximize:hover {
+  background-color: #333333aa;
+}
+
+nav #buttons #quit:hover {
+  background-color: #ff0000dd;
 }

@@ -1,12 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <link rel="stylesheet" href="index.css">
-  </head>
-  <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <title>BetterDiscordStatus</title>
+  <link rel="stylesheet" href="../assets/css/bootstrap.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="./index.css">
+  <script src="../assets/js/jquery-3.5.1.min.js"></script>
+</head>
+
+<body>
+  <script src="../assets/js/jquery-3.5.1.min.js"></script>
+  <script src="../assets/js/popper.min.js"></script>
+  <script src="../assets/js/bootstrap.js"></script>
+  <script defer src="render.js"></script>
+  <header id="titlebar">
+    <div class="container-fluid p-0 m-0 sticky-top" style="overflow-x: hidden;">
+      <!-- Dragable Top Frame -->
+      <nav class="row justify-content-between p-0 m-0">
+  
+        <!-- Titel -->
+        <div class="col p-0 m-0 ps-2 darkmode" style="text-align: left; -webkit-app-region: drag;">
+          <span class="pe-2">BetterDiscordStatus</span>
+        </div>
+  
+        <!-- Windows Navigation Buttons -->
+        <div class="col-3 p-0 m-0 darkmode" id="buttons">
+          <div id="minimize" class="darkmode">
+            <i class="bi-dash" style="font-size: 1rem;"></i>
+          </div>
+          <div id="maximize" class="darkmode">
+            <i class="bi-aspect-ratio" style="font-size: 1rem;"></i>
+          </div>
+          <div id="quit" class="darkmode">
+            <i class="bi-x" style="font-size: 1rem;"></i>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+</body>
+
 </html>
