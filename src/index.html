@@ -13,33 +13,192 @@
 <body>
   <script src="../assets/js/jquery-3.5.1.min.js"></script>
   <script src="../assets/js/popper.min.js"></script>
-  <script src="../assets/js/bootstrap.js"></script>
+  <script src="../assets/js/bootstrap.min.js"></script>
+  <script src="../assets/js/bootstrap.bundle.min.js"></script>
   <script defer src="render.js"></script>
-  <header id="titlebar">
-    <div class="container-fluid p-0 m-0 sticky-top" style="overflow-x: hidden;">
-      <!-- Dragable Top Frame -->
-      <nav class="row justify-content-between p-0 m-0">
-  
-        <!-- Titel -->
-        <div class="col p-0 m-0 ps-2 darkmode" style="text-align: left; -webkit-app-region: drag;">
-          <span class="pe-2">BetterDiscordStatus</span>
+
+  <div class="container-fluid p-0 m-0 sticky-top titlebar">
+    <!-- Dragable Top Frame -->
+    <nav class="row justify-content-between p-0 m-0">
+
+      <!-- Titel -->
+      <div class="col p-0 m-0 ps-2 darkmode" style="text-align: left; -webkit-app-region: drag;">
+        <div class="pe-2">
+          <img src="../assets/icons/logoicon.png" alt="" width="30" height="30" class="d-inline-block align-top">
+          <span style="font-size: 20px;">BetterDiscordStatus</span>
         </div>
-  
-        <!-- Windows Navigation Buttons -->
-        <div class="col-3 p-0 m-0 darkmode" id="buttons">
-          <div id="minimize" class="darkmode">
-            <i class="bi-dash" style="font-size: 1rem;"></i>
-          </div>
-          <div id="maximize" class="darkmode">
-            <i class="bi-aspect-ratio" style="font-size: 1rem;"></i>
-          </div>
-          <div id="quit" class="darkmode">
-            <i class="bi-x" style="font-size: 1rem;"></i>
-          </div>
+      </div>
+
+      <!-- Windows Navigation Buttons -->
+      <div class="col-3 p-0 m-0 darkmode" id="buttons">
+        <div id="minimize" class="darkmode">
+          <i class="bi-dash" style="font-size: 1rem;"></i>
         </div>
-      </nav>
+        <div id="maximize" class="darkmode">
+          <i class="bi-aspect-ratio" style="font-size: 1rem;"></i>
+        </div>
+        <div id="quit" class="darkmode">
+          <i class="bi-x" style="font-size: 1rem;"></i>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="px-5 main-body" style="overflow-x: hidden; ">
+    <div class="little-titel">
+      <!-- Client ID -->
+      <h1 class="display-6">ClientID</h1>
+      <div class="input-group mb-3 input-group-sm">
+        <span class="input-group-text clientid-label">ClientID</span>
+        <input type="text" class="form-control" id="client_id">
+      </div>
+      <hr>
     </div>
-  </header>
+
+    <div class="little-titel">
+      <!-- State -->
+      <h1 class="display-6">State</h1>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="state_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text custom-label">State</span>
+        <input type="text" class="form-control" id="state" disabled>
+      </div>
+      <hr>
+    </div>
+
+    <div class="little-titel">
+      <!-- Details -->
+      <h1 class="display-6">Details</h1>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="details_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text custom-label">Details</span>
+        <input type="text" class="form-control" id="details" disabled>
+      </div>
+      <hr>
+    </div>
+
+    <div class="little-titel">
+      <!-- Timestamps -->
+      <h1 class="display-6">Timestamps</h1>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="timestamp_start_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text custom-label">Start</span>
+        <input type="text" class="form-control" id="timestamp_start" disabled>
+        <span class="input-group-text">ms</span>
+      </div>
+
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="timestamp_end_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text custom-label">End</span>
+        <input type="text" class="form-control" id="timestamp_end" disabled>
+        <span class="input-group-text">ms</span>
+      </div>
+      <hr>
+    </div>
+
+    <div class="little-titel">
+      <!-- Assets -->
+      <h1 class="display-6">Assets</h1>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="assets_large_image_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text custom-label">Large Image</span>
+        <input type="text" class="form-control" id="assets_large_image" disabled>
+      </div>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="assets_large_text_checkbox"
+              disabled>
+          </div>
+        </div>
+        <span class="input-group-text custom-label">Large Text</span>
+        <input type="text" class="form-control" id="assets_large_text" disabled>
+      </div>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="assets_small_image_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text custom-label">Small Image</span>
+        <input type="text" class="form-control" id="assets_small_image" disabled>
+      </div>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch"><input class="form-check-input" type="checkbox" value="" tabindex="-1"
+              id="assets_small_text_checkbox" disabled>
+          </div>
+        </div>
+        <span class="input-group-text custom-label">Small Text</span>
+        <input type="text" class="form-control" id="assets_small_text" disabled>
+      </div>
+      <hr>
+    </div>
+
+    <div class="little-titel">
+      <!-- Party -->
+      <h1 class="display-6">Party Size</h1>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="party_size_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text custom-label">Current and Maximum</span>
+        <input type="text" class="form-control" id="party_size_current" disabled>
+        <input type="text" class="form-control" id="party_size_maximum" disabled>
+      </div>
+      <hr>
+    </div>
+
+    <div class="little-titel">
+      <!-- Buttons -->
+      <h1 class="display-6">Buttons</h1>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="button_one_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text" style="width: 34px;">#1</span>
+        <span class="input-group-text button_label">Label and URL</span>
+        <input type="text" class="form-control" id="button_label_one" disabled>
+        <input type="text" class="form-control" id="button_url_one" disabled>
+      </div>
+      <div class="input-group mb-3 input-group-sm">
+        <div class="input-group-text">
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="button_two_checkbox">
+          </div>
+        </div>
+        <span class="input-group-text" style="width: 34px;">#2</span>
+        <span class="input-group-text button_label">Label and URL</span>
+        <input type="text" class="form-control" id="button_label_two" disabled>
+        <input type="text" class="form-control" id="button_url_two" disabled>
+      </div>
+      <hr>
+    </div>
+  </div>
 </body>
 
 </html>
