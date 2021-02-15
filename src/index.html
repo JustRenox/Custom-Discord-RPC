@@ -200,9 +200,9 @@
     </div>
 
     <div style="display: flex; justify-content: space-around;">
-      <button type="button" class="btn btn-primary">Connect</button>
+      <button type="button" class="btn btn-primary" id="connect_button">Connect</button>
 
-      <button type="button" class="btn btn-primary" disabled>Update</button>
+      <button type="button" class="btn btn-primary" id="update_button" disabled>Update</button>
 
       <div class="btn-group">
         <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown">
@@ -210,15 +210,15 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-dark scrollable-menu">
           <!--- This is just a few placeholders until i get to implement the loading of the Profiles etc. -->
-          <li><a class="dropdown-item" href="#">Last Profile</a></li>
+          <li><a class="dropdown-item loading_dropdown_option">Last Profile</a></li>
           <li>
             <hr class="dropdown-divider">
           </li>
-          <li><a class="dropdown-item" href="#">Profile 1</a></li>
-          <li><a class="dropdown-item" href="#">Profile 2</a></li>
-          <li><a class="dropdown-item" href="#">Profile 3</a></li>
-          <li><a class="dropdown-item" href="#">Profile 4</a></li>
-          <li><a class="dropdown-item" href="#">Profile 5</a></li>
+          <li><a class="dropdown-item loading_dropdown_option">Profile 1</a></li>
+          <li><a class="dropdown-item loading_dropdown_option">Profile 2</a></li>
+          <li><a class="dropdown-item loading_dropdown_option">Profile 3</a></li>
+          <li><a class="dropdown-item loading_dropdown_option">Profile 4</a></li>
+          <li><a class="dropdown-item loading_dropdown_option">Profile 5</a></li>
         </ul>
       </div>
 
@@ -237,13 +237,13 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-success">Save</button>
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="save_button">Save</button>
             </div>
           </div>
         </div>
       </div>
 
-      <button type="button" class="btn btn-danger" disabled>Disconnect</button>
+      <button type="button" class="btn btn-danger" id="disconnect_button" disabled>Disconnect</button>
     </div>
 
   </div>

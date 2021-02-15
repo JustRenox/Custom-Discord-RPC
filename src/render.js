@@ -81,17 +81,17 @@ let button_label_two = $("#button_label_two")
 let button_url_two = $("#button_url_two")
 //---------------------------------------------------------
 
-// //App-Controll-Buttons-------------------------------------
-// let ControllButtonSetStatus = $("#ControllButtonSetStatus")
-// let ControllButtonLoadStatus = $("#ControllButtonLoadStatus")
-// let ControllButtonSaveStatus = $("#ControllButtonSaveStatus")
-// //---------------------------------------------------------
+//Status-Controll-Buttons----------------------------------
+let connect_button = $("#connect_button")
+let update_button = $("#update_button")
+let save_button = $("#save_button")
+let loading_dropdown_option = $(".loading_dropdown_option")
+let disconnect_button = $("#disconnect_button")
+//---------------------------------------------------------
 
-// //Alerts---------------------------------------------------
-// let divAlertError = $("#divAlertError")
-// let alertBoxError = $("#alertBoxError")
-// let alertErrorText = $("#alertErrorText")
-// //---------------------------------------------------------
+//Alerts---------------------------------------------------
+
+//---------------------------------------------------------
 
 ///////////////////////////////////////////////////////////
 //  Handling the checkbox switches                      //
@@ -158,4 +158,29 @@ button_one_checkbox.click(() => {
 button_two_checkbox.click(() => {
     button_label_two.prop("disabled", (button_two_checkbox.is(":checked") ? false : true))
     button_url_two.prop("disabled", (button_two_checkbox.is(":checked") ? false : true))
+})
+
+///////////////////////////////////////////////////////////
+//  Handling the Status Buttons                         //
+//////////////////////////////////////////////////////////
+
+connect_button.click(() => {
+    console.info("Connect")
+})
+
+update_button.click(() => {
+    console.info("Update")
+})
+
+loading_dropdown_option.click(element => {
+    profile = element.currentTarget.text
+    console.info(profile)
+})
+
+save_button.click(() => {
+    console.info("Save")
+})
+
+disconnect_button.click(() => {
+    console.info("Disconnect")
 })
