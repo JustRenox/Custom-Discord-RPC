@@ -159,4 +159,3 @@ button_two_checkbox.click(() => {
     button_label_two.prop("disabled", (button_two_checkbox.is(":checked") ? false : true))
     button_url_two.prop("disabled", (button_two_checkbox.is(":checked") ? false : true))
 })
-

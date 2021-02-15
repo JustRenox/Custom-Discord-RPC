@@ -15,20 +15,21 @@ body {
 }
 
 .form-check-input:focus {
-  box-shadow:none !important;
+  box-shadow: none !important;
 }
 
 ::-webkit-scrollbar {
   display: none;
 }
 
-.main-body{
+.main-body {
   padding-top: 40px;
   padding-bottom: 20px;
 }
 
-.titlebar{
-  user-select: none; position: fixed;
+.titlebar {
+  user-select: none;
+  position: fixed;
 }
 
 nav #buttons {
@@ -99,7 +100,7 @@ input.form-check-input:checked {
   border-color: #23a02d;
 }
 
-.display-6{
+.display-6 {
   font-size: 2rem;
 }
 
@@ -118,18 +119,36 @@ input.form-check-input:checked {
 span.input-group-text.custom-label {
   width: 158px;
   text-align: center;
+  display: inline;
 }
 
 span.input-group-text.clientid-label {
   width: 211px;
+  text-align: center;
+  display: inline;
 }
 
 span.input-group-text.button_label {
   width: 124px;
+  text-align: center;
+  display: inline;
 }
 
+.modal-content {
+  background-color: #202020;
+  color: #fff;
+  /* border: 1px solid #198754; */
+  border: none;
+}
 
+/* 198754 */
 
-.little-titel {
-  text-align: center;
+.modal-header {
+  /* border-bottom: 1px solid #198754; */
+  border: none;
+}
+
+.modal-footer {
+  /* border-top: 1px solid #198754; */
+  border-top: none;
 }

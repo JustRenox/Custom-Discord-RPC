@@ -198,6 +198,54 @@
       </div>
       <hr>
     </div>
+
+    <div style="display: flex; justify-content: space-around;">
+      <button type="button" class="btn btn-primary">Connect</button>
+
+      <button type="button" class="btn btn-primary" disabled>Update</button>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown">
+          Load
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark scrollable-menu">
+          <!--- This is just a few placeholders until i get to implement the loading of the Profiles etc. -->
+          <li><a class="dropdown-item" href="#">Last Profile</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item" href="#">Profile 1</a></li>
+          <li><a class="dropdown-item" href="#">Profile 2</a></li>
+          <li><a class="dropdown-item" href="#">Profile 3</a></li>
+          <li><a class="dropdown-item" href="#">Profile 4</a></li>
+          <li><a class="dropdown-item" href="#">Profile 5</a></li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#savinginput">
+        Save
+      </button>
+
+      <div class="modal fade" id="savinginput" style="color: #000;">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Enter a name for this Status</h5>
+            </div>
+            <div class="modal-body">
+              <input type="text" class="form-control" id="saving_profile">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-success">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-danger" disabled>Disconnect</button>
+    </div>
+
   </div>
 </body>
 
