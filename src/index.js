@@ -98,4 +98,30 @@ app.on('ready', () => {
   // In this file you can include the rest of your app's specific main process
   // code. You can also put them in separate files and import them here.
 
+  ipc.on("getProfiles", (event, package) => {
+    let profile = fs.readdirSync(path.join(app.getPath("userData") + "/profiles"))
+    let returnPackage = profile.filter(file => file.endsWith('.json'))
+    event.returnValue = returnPackage
+  })
+
+  ipc.on("getProfile", (event, profile_name) => {
+    let package
+    try {
+      profile = fs.readFileSync(path.join(app.getPath("userData") + `/profiles/${profile_name}.json`), "utf8")
+      package = {
+        type: "success",
+        message: `Successfully loaded the selected "${profile_name}"`,
+        content: JSON.parse(profile)
+      }
+    } catch (error) {
+      console.log(error)
+      package = {
+        type: "error",
+        message: "I couldn't find the fiel you where looking for.",
+        error: error
+      }
+    }
+    event.returnValue = package
+  })
+
 });

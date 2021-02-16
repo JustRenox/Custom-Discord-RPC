@@ -152,3 +152,67 @@ span.input-group-text.button_label {
   /* border-top: 1px solid #198754; */
   border-top: none;
 }
+
+.dropdown-menu.dropdown-menu-dark.scrollable-menu {
+  max-width: 270px;
+}
+
+.dropdown-item.loading_dropdown_option {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.toast-container {
+  width: 382px;
+}
+
+.custom-icon-style {
+  font-size: 20px;
+  padding-right: 10px;
+}
+
+.notification-error {
+  background-color: #803333;
+}
+
+.notification-error .toast-header {
+  background-color: transparent;
+  color: #fff !important;
+}
+
+.notification-error .toast-body {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.notification-warning {
+  background-color: #ad8d26;
+}
+
+.notification-warning .toast-header {
+  background-color: transparent;
+  color: #fff !important;
+}
+
+.notification-warning .toast-body {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.notification-success {
+  background-color: #257a1a;
+}
+
+.notification-success .toast-header {
+  background-color: transparent;
+  color: #fff !important;
+}
+
+.notification-success .toast-body {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.btn-close {
+  box-shadow: none !important;
+}
+
+/* .toast-body {} */
