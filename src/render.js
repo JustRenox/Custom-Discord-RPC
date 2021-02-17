@@ -89,8 +89,8 @@ let load_button = document.getElementById("load_button")
 let disconnect_button = document.getElementById("disconnect_button")
 //---------------------------------------------------------
 
-//Alerts---------------------------------------------------
-
+//Status-Saving-Menu---------------------------------------
+var saveModal = new bootstrap.Modal(document.getElementById('savinginput'), { keyboard: false })
 //---------------------------------------------------------
 
 ///////////////////////////////////////////////////////////
@@ -173,7 +173,6 @@ update_button.addEventListener("click", () => {
 })
 
 load_button.addEventListener("show.bs.dropdown", () => {
-    console.info("Load")
     rebuildDropdown()
     let profiles = getProfiles()
     profiles.forEach(e => {
@@ -183,7 +182,37 @@ load_button.addEventListener("show.bs.dropdown", () => {
 })
 
 save_button.addEventListener("click", () => {
-    console.info("Save")
+    savefileName = document.getElementById("saving_profile").value
+    if (validateSavefileName(savefileName) == false) {
+        //Returning if the Name is invalid (Notification gets created inside the function for more specific rrror)
+        document.getElementById("saving_profile").value = ""
+        saveModal.hide()
+        return
+    }
+    else {
+        let package = {
+            name: savefileName,
+            content: saveProfiles()
+        }
+        let reply = ipc.sendSync("saveProfile", package);
+        document.getElementById("saving_profile").value = ""
+        saveModal.hide()
+        if (reply.type == "success" && reply.message) {
+            notify({
+                type: "success",
+                message: reply.message,
+                delay: 5000
+            })
+        }
+        else if (reply.type == "error" && reply.message) {
+            reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
+            notify({
+                type: "error",
+                message: reply.message,
+                delay: 10000
+            })
+        }
+    }
 })
 
 disconnect_button.addEventListener("click", () => {
@@ -209,25 +238,179 @@ disconnect_button.addEventListener("click", () => {
 //  Functions                                           //
 //////////////////////////////////////////////////////////
 
+function validateSavefileName(savefileName) {
+    lettercheck = /^[A-Za-z0-9]*$/
+    if (lettercheck.test(savefileName) == true) {
+        if (savefileName.length >= 3) {
+            if (savefileName.length <= 32) {
+                profilenames = getProfiles()
+                let duplicat
+                profilenames.forEach(profile_Name => {
+                    profile_Name = profile_Name.replace(/.json/, "")
+                    if (profile_Name == savefileName) {
+                        duplicat = true
+                        return false;
+                    }
+                });
+                if (duplicat == true) {
+                    notify({
+                        type: "warning",
+                        message: "The is already a profile with that name!",
+                        delay: 5000
+                    })
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            } else {
+                notify({
+                    type: "warning",
+                    message: "The filename is too long (Max. 32 Characters)! The profile was not saved.",
+                    delay: 5000
+                })
+                return false;
+            }
+        } else {
+            notify({
+                type: "warning",
+                message: "The filename is too short (Min. 3 Characters)! The profile was not saved.",
+                delay: 5000
+            })
+            return false;
+        }
+    } else {
+        notify({
+            type: "warning",
+            message: "Invalid character! The profile was not saved.",
+            delay: 5000
+        })
+        return false;
+    }
+}
+
+function validateInputs() {
+    return true;
+}
+
 function loadThisStatus() {
-    let profile_name = this.value
+    let profile_name = this.id ? "default/last" : this.value
     let reply = ipc.sendSync("getProfile", profile_name);
-    if (reply.type == "success") {
-        console.log(reply.content)
+    if (reply.type == "success" && reply.content) {
+        loadProfile(reply.content)
         notify({
             type: "success",
             message: reply.message,
             delay: 5000
         })
     }
-    else if (reply.type == "error") {
-        console.error(reply.error)
+    else if (reply.type == "error" && reply.message) {
+        reply.error ? console.error(reply.error) : console.warn("There was an error but no error object was passed");
         notify({
             type: "error",
             message: reply.message,
-            delay: 5000
+            delay: 10000
         })
     }
+}
+
+function loadProfile(profile) {
+    let fields = document.querySelectorAll(".form-control:not([id=saving_profile])")
+    fields.forEach(element => {
+        element.value = ""
+    })
+
+    inputs = profile.inputs
+    checkboxes = profile.checkboxes
+
+    fields.forEach(element => {
+        if (inputs[element.id]) {
+            element.value = typeof inputs[element.id] ? inputs[element.id] : element.value
+        }
+    })
+
+    //switching the checkboxes to the profiles settings
+    state_checkbox.checked = typeof checkboxes.state_checkbox ? checkboxes.state_checkbox : state_checkbox.checked
+    details_checkbox.checked = typeof checkboxes.details_checkbox ? checkboxes.details_checkbox : details_checkbox.checked
+    timestamp_start_checkbox.checked = typeof checkboxes.timestamp_start_checkbox ? checkboxes.timestamp_start_checkbox : timestamp_start_checkbox.checked
+    timestamp_end_checkbox.checked = typeof checkboxes.timestamp_end_checkbox ? checkboxes.timestamp_end_checkbox : timestamp_end_checkbox.checked
+    assets_large_image_checkbox.checked = typeof checkboxes.assets_large_image_checkbox ? checkboxes.assets_large_image_checkbox : assets_large_image_checkbox.checked
+    assets_large_text_checkbox.checked = typeof checkboxes.assets_large_text_checkbox ? checkboxes.assets_large_text_checkbox : assets_large_text_checkbox.checked
+    assets_small_image_checkbox.checked = typeof checkboxes.assets_small_image_checkbox ? checkboxes.assets_small_image_checkbox : assets_small_image_checkbox.checked
+    assets_small_text_checkbox.checked = typeof checkboxes.assets_small_text_checkbox ? checkboxes.assets_small_text_checkbox : assets_small_text_checkbox.checked
+    party_size_checkbox.checked = typeof checkboxes.party_size_checkbox ? checkboxes.party_size_checkbox : party_size_checkbox.checked
+    button_one_checkbox.checked = typeof checkboxes.button_one_checkbox ? checkboxes.button_one_checkbox : button_one_checkbox.checked
+    button_two_checkbox.checked = typeof checkboxes.button_two_checkbox ? checkboxes.button_two_checkbox : button_two_checkbox.checked
+
+    //Turning the inputs on depending on the checkbox state
+    state.disabled = checkboxes.state_checkbox ? false : true
+    details.disabled = checkboxes.details_checkbox ? false : true
+    timestamp_start.disabled = checkboxes.timestamp_start_checkbox ? false : true
+    timestamp_end.disabled = checkboxes.timestamp_end_checkbox ? false : true
+    function activateLarge() {
+        assets_large_image.disabled = false
+        assets_large_text_checkbox.disabled = false
+        assets_large_text.disabled = assets_large_text_checkbox.checked ? false : true
+    }
+    function deactivateLarge() {
+        assets_large_image.disabled = true
+        assets_large_text_checkbox.disabled = true
+        assets_large_text.disabled = true
+    }
+    assets_large_image_checkbox.checked ? activateLarge() : deactivateLarge()
+    function activateSmall() {
+        assets_small_image.disabled = false
+        assets_small_text_checkbox.disabled = false
+        assets_small_text.disabled = assets_small_text_checkbox.checked ? false : true
+    }
+    function deactivateSmall() {
+        assets_small_image.disabled = true
+        assets_small_text_checkbox.disabled = true
+        assets_small_text.disabled = true
+    }
+    assets_small_image_checkbox.checked ? activateSmall() : deactivateSmall()
+    party_size_current.disabled = checkboxes.party_size_checkbox ? false : true
+    party_size_maximum.disabled = checkboxes.party_size_checkbox ? false : true
+    button_label_one.disabled = checkboxes.button_one_checkbox ? false : true
+    button_url_one.disabled = checkboxes.button_one_checkbox ? false : true
+    button_label_two.disabled = checkboxes.button_two_checkbox ? false : true
+    button_url_two.disabled = checkboxes.button_two_checkbox ? false : true
+}
+
+function saveProfiles() {
+    let profile = {
+        inputs: {
+            client_id: client_id.value,
+            state: state.value,
+            details: details.value,
+            timestamp_start: timestamp_start.value,
+            timestamp_end: timestamp_end.value,
+            assets_large_image: assets_large_image.value,
+            assets_large_text: assets_large_text.value,
+            assets_small_image: assets_small_image.value,
+            assets_small_text: assets_small_text.value,
+            party_size_current: party_size_current.value,
+            party_size_maximum: party_size_maximum.value,
+            button_label_one: button_label_one.value,
+            button_url_one: button_url_one.value,
+            button_label_two: button_label_two.value,
+            button_url_two: button_url_two.value
+        },
+        checkboxes: {
+            state_checkbox: state_checkbox.checked,
+            details_checkbox: details_checkbox.checked,
+            timestamp_start_checkbox: timestamp_start_checkbox.checked,
+            timestamp_end_checkbox: timestamp_end_checkbox.checked,
+            assets_large_image_checkbox: assets_large_image_checkbox.checked,
+            assets_large_text_checkbox: assets_large_text_checkbox.checked,
+            assets_small_image_checkbox: assets_small_image_checkbox.checked,
+            assets_small_text_checkbox: assets_small_text_checkbox.checked,
+            party_size_checkbox: party_size_checkbox.checked,
+            button_one_checkbox: button_one_checkbox.checked,
+            button_two_checkbox: button_two_checkbox.checked
+        }
+    }
+    return profile
 }
 
 function rebuildDropdown() {
@@ -237,9 +420,10 @@ function rebuildDropdown() {
     let list_item_b = document.createElement("li")
     let content_a = document.createElement("a")
     let content_b = document.createElement("hr")
-    content_a.innerHTML = "Last Profile"
+    content_a.innerHTML = "Last Used Profile"
     content_a.className = "dropdown-item loading_dropdown_option"
     content_a.onclick = loadThisStatus
+    content_a.id = "default_Profile"
     content_b.className = "dropdown-divider"
     list_item_a.appendChild(content_a)
     dropdown.appendChild(list_item_a)
@@ -250,7 +434,17 @@ function rebuildDropdown() {
 function getProfiles() {
     let package = "Requesting list of all profiles"
     let reply = ipc.sendSync("getProfiles", package);
-    return reply
+    if (reply.type == "error" && reply.message) {
+        reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
+        notify({
+            type: "error",
+            message: reply.message,
+            delay: 10000
+        })
+        return []
+    }
+    return reply.content
+
 }
 
 function createNewDropdownElement(profile_name) {
