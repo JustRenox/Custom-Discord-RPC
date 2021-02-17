@@ -1,12 +1,14 @@
 const { app, BrowserWindow, Menu, Tray } = require('electron');
 const nativeImage = require('electron').nativeImage;
 const path = require('path');
+const request = require("request");
+const fs = require('fs');
 const ipc = require('electron').ipcMain;
 const RPC = require('discord-rpc');
 let client = new RPC.Client({
   transport: 'ipc'
 });
-const fs = require('fs');
+let discordApiURL = "https://discord.com/api/v8/oauth2/applications/"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -101,11 +103,11 @@ app.on('ready', () => {
   function checkForImportantFiles() {
     if (!fs.existsSync(path.join(app.getPath("userData") + "/profiles"))) {
       fs.mkdirSync(path.join(app.getPath("userData") + "/profiles"))
-      console.log(`Created folder: ${path.join(app.getPath("userData") + "/profiles")}`)
+      console.info(`Created folder: ${path.join(app.getPath("userData") + "/profiles")}`)
     }
     if (!fs.existsSync(path.join(app.getPath("userData") + "/profiles/default"))) {
       fs.mkdirSync(path.join(app.getPath("userData") + "/profiles/default"))
-      console.log(`Created folder: ${path.join(app.getPath("userData") + "/profiles/default")}`)
+      console.info(`Created folder: ${path.join(app.getPath("userData") + "/profiles/default")}`)
     }
     if (!fs.existsSync(path.join(app.getPath("userData") + "/profiles/default/last.json"))) {
       let empty_last_file = {
@@ -140,8 +142,8 @@ app.on('ready', () => {
           "button_two_checkbox": false
         }
       }
-      fs.writeFileSync(path.join(app.getPath("userData") + "/profiles/default/last.json"),JSON.stringify(empty_last_file))
-      console.log(`Created folder: ${path.join(app.getPath("userData") + "/profiles/default/last.json")}`)
+      fs.writeFileSync(path.join(app.getPath("userData") + "/profiles/default/last.json"), JSON.stringify(empty_last_file))
+      console.info(`Created folder: ${path.join(app.getPath("userData") + "/profiles/default/last.json")}`)
     }
   }
 
@@ -207,6 +209,85 @@ app.on('ready', () => {
         event.returnValue = returnPackage
       }
     })
+  })
+
+  ipc.on("connectRPC", (event, package) => {
+    request(`${discordApiURL}${package.client_id}/rpc`, function (error, res, body) {
+      if (error) {
+        console.log(error)
+        event.returnValue = {
+          type: "error",
+          message: "Unexpected Error while trying to connect to the ",
+          error: error
+        }
+        return
+      }
+      body = JSON.parse(body)
+      if (body.message == 'Unknown Application' || body.code == 10002) {
+        anwser = {
+          type: "error",
+          message: "Unknown Application. Please check if you got the right ClientID",
+        }
+        event.returnValue = anwser
+        return
+      }
+      if (body.name && body.id) {
+        try {
+          client.login({ clientId: package.client_id })
+        } catch (error) {
+          event.returnValue = {
+            type: "error",
+            message: "Unexpected Error while trying to connect to the ",
+            error: error
+          }
+        }
+        let anwser = null
+        client.on("disconnected", () => {
+          anwser = {
+            type: "error",
+            message: "Connection rejected. Invalid ClientID!",
+          }
+          event.returnValue = anwser
+          return
+        })
+        client.on("ready", () => {
+          anwser = {
+            type: "success",
+            message: "Successfully connected to Discord. You can now update the status!",
+          }
+          event.returnValue = anwser
+          return
+        })
+        setTimeout(() => {
+          if (anwser == null) {
+            event.returnValue = {
+              type: "error",
+              message: "Connection timeout. Please try again!",
+            }
+          }
+        }, 250);
+      }
+    })
+  })
+
+  ipc.on("disconnectRPC", (event, package) => {
+    try {
+      client.destroy().then(() => {
+        client = null
+        client = new RPC.Client({ transport: 'ipc' })
+      })
+    } catch (error) {
+      event.returnValue = {
+        type: "error",
+        message: "Unexpected error while trying to destroy the current client.",
+        error: error
+      }
+      return
+    }
+    event.returnValue = {
+      type: "success",
+      message: "Successfully disconnected from Discord. You can now reconnect!",
+    }
   })
 
 });

@@ -165,7 +165,43 @@ button_two_checkbox.addEventListener("click", () => {
 //////////////////////////////////////////////////////////
 
 connect_button.addEventListener("click", () => {
-    console.info("Connect")
+    const digitreg = /^\d+$/;
+    if (client_id.value == "") {
+        return notify({
+            type: "warning",
+            message: "ClientID must be defined in order to connect to the Discord.",
+            delay: 5000
+        })
+    }
+    if (digitreg.test(client_id.value) == false) {
+        return notify({
+            type: "warning",
+            message: "ClientID can only consist of digits.",
+            delay: 5000
+        })
+    }
+    let package = {
+        client_id: client_id.value
+    }
+    let reply = ipc.sendSync("connectRPC", package);
+    if (reply.type == "error" && reply.message) {
+        notify({
+            type: "error",
+            message: reply.message,
+            delay: 5000
+        })
+        return;
+    } else if (reply.type == "success" && reply.message) {
+        notify({
+            type: "success",
+            message: reply.message,
+            delay: 5000
+        })
+        connect_button.disabled = true
+        client_id.disabled = true
+        update_button.disabled = false
+        disconnect_button.disabled = false
+    }
 })
 
 update_button.addEventListener("click", () => {
@@ -216,22 +252,27 @@ save_button.addEventListener("click", () => {
 })
 
 disconnect_button.addEventListener("click", () => {
-    console.info("Disconnect")
-    notify({
-        type: "error",
-        message: "You did something wrong here",
-        delay: 300000
-    })
-    notify({
-        type: "warning",
-        message: "You did something questionable here",
-        delay: 300000
-    })
-    notify({
-        type: "success",
-        message: "You did something good here",
-        delay: 300000
-    })
+    let package = "Requesting destruction of current client and creation of a new client."
+    let reply = ipc.sendSync("disconnectRPC", package);
+    if (reply.type == "error" && reply.message) {
+        reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
+        notify({
+            type: "error",
+            message: reply.message,
+            delay: 5000
+        })
+        return;
+    } else if (reply.type == "success" && reply.message) {
+        notify({
+            type: "success",
+            message: reply.message,
+            delay: 5000
+        })
+    }
+    connect_button.disabled = false
+    client_id.disabled = false
+    update_button.disabled = true
+    disconnect_button.disabled = true
 })
 
 ///////////////////////////////////////////////////////////
@@ -241,7 +282,7 @@ disconnect_button.addEventListener("click", () => {
 function validateSavefileName(savefileName) {
     lettercheck = /^[A-Za-z0-9]*$/
     if (lettercheck.test(savefileName) == true) {
-        if (savefileName.length >= 3) {
+        if (savefileName.length >= 5) {
             if (savefileName.length <= 32) {
                 profilenames = getProfiles()
                 let duplicat
@@ -274,7 +315,7 @@ function validateSavefileName(savefileName) {
         } else {
             notify({
                 type: "warning",
-                message: "The filename is too short (Min. 3 Characters)! The profile was not saved.",
+                message: "The filename is too short (Min. 5 Characters)! The profile was not saved.",
                 delay: 5000
             })
             return false;
@@ -290,6 +331,142 @@ function validateSavefileName(savefileName) {
 }
 
 function validateInputs() {
+    function throwerror(message) {
+        notify({
+            type: "warning",
+            message: message,
+            delay: 5000
+        })
+    }
+    const digitreg = /^\d+$/;
+    const urlreg = /(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,6}(\/\S*)?$/;
+
+    if (state_checkbox.checked == true) {
+        if (state.value == "") {
+            throwerror("The State field can't be empty.")
+            return false;
+        }
+    }
+
+    if (details_checkbox.checked == true) {
+        if (details.value == "") {
+            throwerror("The State field can't be empty.")
+            return false;
+        }
+    }
+
+    if (timestamp_start_checkbox.checked == true) {
+        if (timestamp_start.value == "") {
+            throwerror("The Timestamp-Start field can't be empty.")
+            return false;
+        }
+        if (digitreg.test(timestamp_start.value) == false) {
+            throwerror("The Timestamp-Start field can only contain digits.")
+            return false;
+        }
+        if (parseInt(timestamp_start.value) > 86400000) {
+            throwerror("The Timestamp-Start field can only be up to 86400000ms.")
+            return false;
+        }
+    }
+
+    if (timestamp_end_checkbox.checked == true) {
+        if (timestamp_end.value == "") {
+            throwerror("The Timestamp-End field can't be empty.")
+            return false;
+        }
+        if (digitreg.test(timestamp_end.value) == false) {
+            throwerror("The Timestamp-End field can only contain digits.")
+            return false;
+        }
+        if (parseInt(timestamp_end.value) > 86400000) {
+            throwerror("The Timestamp-End field can only be up to 86400000ms.")
+            return false;
+        }
+    }
+
+    if (assets_large_image_checkbox.checked == true) {
+        if (assets_large_image.value == "") {
+            throwerror("The Large-Image field can't be empty.")
+            return false;
+        }
+    }
+    if (assets_large_text_checkbox.checked == true && assets_large_image_checkbox.checked == true) {
+        if (assets_large_image.value == "") {
+            throwerror("The Large-Text field can't be empty.")
+            return false;
+        }
+    }
+    if (assets_small_image_checkbox.checked == true) {
+        if (assets_small_image.value == "") {
+            throwerror("The Small-Image field can't be empty.")
+            return false;
+        }
+    }
+    if (assets_small_text_checkbox.checked == true && assets_small_image_checkbox.checked == true) {
+        if (assets_small_text.value == "") {
+            throwerror("The Small-Text field can't be empty.")
+            return false;
+        }
+    }
+
+    if (party_size_checkbox.checked == true) {
+        if (party_size_current.value == "") {
+            throwerror("The Party-Size-Current field can't be empty.")
+            return false;
+        }
+        if (digitreg.test(party_size_current.value) == false) {
+            throwerror("The Party-Size-Current field can only contain digits.")
+            return false;
+        }
+        if (parseInt(party_size_current.value) > 10000000000) {
+            throwerror("The Party-Size-Current can only be up to 10000000000.")
+            return false;
+        }
+        if (party_size_maximum.value == "") {
+            throwerror("The Party-Size-Maximum field can't be empty.")
+            return false;
+        }
+        if (digitreg.test(party_size_maximum.value) == false) {
+            throwerror("The Party-Size-Maximum field can only contain digits.")
+            return false;
+        }
+        if (parseInt(party_size_maximum.value) > 10000000000) {
+            throwerror("The Party-Size-Maximum can only be up to 10000000000.")
+            return false;
+        }
+    }
+
+    if (button_one_checkbox.checked == true) {
+        if (button_label_one.value == "") {
+            throwerror("The Button-#1-Label field cant be empty")
+            return false;
+        }
+        if (button_url_one.value == "") {
+            throwerror("The Button-#1-URL field cant be empty")
+            return false;
+        }
+        if (urlreg.test(button_url_one.value) == false) {
+            throwerror("The Button-#1-URL field can only contain a valid HTTP link")
+            return false;
+        }
+    }
+
+    if (button_two_checkbox.checked == true) {
+        if (button_label_two.value == "") {
+            throwerror("The Button-#2-Label field cant be empty")
+            return false;
+        }
+        if (button_url_two.value == "") {
+            throwerror("The Button-#2-URL field cant be empty")
+            return false;
+        }
+        if (urlreg.test(button_url_two.value) == false) {
+            throwerror("The Button-#2-URL field can only contain a valid HTTP link")
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -305,7 +482,7 @@ function loadThisStatus() {
         })
     }
     else if (reply.type == "error" && reply.message) {
-        reply.error ? console.error(reply.error) : console.warn("There was an error but no error object was passed");
+        reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
         notify({
             type: "error",
             message: reply.message,
@@ -432,10 +609,10 @@ function rebuildDropdown() {
 }
 
 function getProfiles() {
-    let package = "Requesting list of all profiles"
+    let package = "Requesting list of all profiles."
     let reply = ipc.sendSync("getProfiles", package);
     if (reply.type == "error" && reply.message) {
-        reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
+        reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
         notify({
             type: "error",
             message: reply.message,
@@ -526,7 +703,7 @@ function notify(options) {
             newtoast.remove()
         }, delay + 250);
     } else {
-        console.log("Invalid notification type!")
+        console.info("Invalid notification type!")
         return
     }
 }
