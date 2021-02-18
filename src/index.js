@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray } = require('electron');
+const { app, BrowserWindow, Menu, Tray, shell } = require('electron');
 const nativeImage = require('electron').nativeImage;
 const path = require('path');
 const request = require("request");
@@ -100,6 +100,23 @@ app.on('ready', () => {
   // In this file you can include the rest of your app's specific main process
   // code. You can also put them in separate files and import them here.
 
+  function killClient() {
+    try {
+      client = null
+      client = new RPC.Client({ transport: 'ipc' })
+    } catch (error) {
+      return {
+        type: "error",
+        message: "Unexpected error! The Discord RPC connection was closed by Discord.",
+        error: error
+      }
+    }
+    return {
+      type: "error",
+      message: "Unexpected error! The Discord RPC connection was closed by Discord.",
+    }
+  }
+
   function checkForImportantFiles() {
     if (!fs.existsSync(path.join(app.getPath("userData") + "/profiles"))) {
       fs.mkdirSync(path.join(app.getPath("userData") + "/profiles"))
@@ -149,8 +166,11 @@ app.on('ready', () => {
 
   checkForImportantFiles()
 
+
+
   ipc.on("getProfiles", (event, package) => {
     let returnPackage
+    checkForImportantFiles()
     try {
       let profile = fs.readdirSync(path.join(app.getPath("userData") + "/profiles"))
       content = profile.filter(file => file.endsWith('.json'))
@@ -171,6 +191,7 @@ app.on('ready', () => {
 
   ipc.on("getProfile", (event, profile_name) => {
     let package
+    checkForImportantFiles()
     try {
       profile = fs.readFileSync(path.join(app.getPath("userData") + `/profiles/${profile_name}.json`), "utf8")
       profile_name = profile_name == "default/last" ? "Last Profile" : profile_name
@@ -182,7 +203,7 @@ app.on('ready', () => {
     } catch (error) {
       package = {
         type: "error",
-        message: "Couldn't find the file you where looking for.",
+        message: "Couldn't find the profile you where looking for.",
         error: error
       }
     }
@@ -193,11 +214,12 @@ app.on('ready', () => {
     let savefileName = package.name
     let content = package.content
     let returnPackage = {}
+    checkForImportantFiles()
     fs.writeFile(app.getPath("userData") + `/profiles/${savefileName}.json`, JSON.stringify(content), (err) => {
       if (err) {
         returnPackage = {
           type: "error",
-          message: "There was an error while saving your Profile. Please try again.",
+          message: "There was an error while saving your profile. Please try again.",
           error: err
         }
         event.returnValue = returnPackage
@@ -217,7 +239,7 @@ app.on('ready', () => {
         console.log(error)
         event.returnValue = {
           type: "error",
-          message: "Unexpected Error while trying to connect to the ",
+          message: "Unexpected Error while trying to connect to the Discord RPC",
           error: error
         }
         return
@@ -226,7 +248,7 @@ app.on('ready', () => {
       if (body.message == 'Unknown Application' || body.code == 10002) {
         anwser = {
           type: "error",
-          message: "Unknown Application. Please check if you got the right ClientID",
+          message: "Unknown Application. Please check if you entered the right ClientID",
         }
         event.returnValue = anwser
         return
@@ -235,14 +257,16 @@ app.on('ready', () => {
         try {
           client.login({ clientId: package.client_id })
         } catch (error) {
+          killClient()
           event.returnValue = {
             type: "error",
-            message: "Unexpected Error while trying to connect to the ",
+            message: "Unexpected Error while trying to connect to the Discord RPC",
             error: error
           }
         }
         let anwser = null
         client.on("disconnected", () => {
+          killClient()
           anwser = {
             type: "error",
             message: "Connection rejected. Invalid ClientID!",
@@ -256,21 +280,70 @@ app.on('ready', () => {
             message: "Successfully connected to Discord. You can now update the status!",
           }
           event.returnValue = anwser
+          client.addListener("disconnected", () => {
+            killClient()
+            let message = {
+              type: "warning",
+              message: "The connection to Discord was closed!",
+            }
+            mainWindow.webContents.send("unexpectedDisconnect", message)
+          })
           return
         })
         setTimeout(() => {
           if (anwser == null) {
+            killClient()
             event.returnValue = {
               type: "error",
               message: "Connection timeout. Please try again!",
             }
           }
-        }, 250);
+        }, 3000);
       }
     })
   })
 
+  ipc.on("updateActivity", (event, package) => {
+    try {
+      client.request('SET_ACTIVITY', {
+        pid: process.pid,
+        activity: package.activity
+      });
+    } catch (error) {
+      event.returnValue = {
+        type: "error",
+        message: "The Update Status request was rejected! A look into the Discord console might help.",
+        error: error
+      }
+      return
+    }
+    try {
+      fs.writeFile(app.getPath("userData") + `/profiles/default/last.json`, JSON.stringify(package.profile), (error) => {
+        if (error) {
+          returnPackage = {
+            type: "error",
+            message: "There was an error while saving the profile as 'Last Used Profile'",
+            error: error
+          }
+          event.returnValue = returnPackage
+        }
+      })
+    } catch (error) {
+      returnPackage = {
+        type: "error",
+        message: "There was an error while saving the profile as 'Last Status'",
+        error: error
+      }
+      event.returnValue = returnPackage
+    }
+    event.returnValue = {
+      type: "success",
+      message: "Successfully updated the Status and saved it as 'Last Status'",
+    }
+  })
+
   ipc.on("disconnectRPC", (event, package) => {
+
     try {
       client.destroy().then(() => {
         client = null
@@ -279,14 +352,28 @@ app.on('ready', () => {
     } catch (error) {
       event.returnValue = {
         type: "error",
-        message: "Unexpected error while trying to destroy the current client.",
+        message: "Unexpected error while trying to destroy the current Discord RPC client.",
         error: error
       }
       return
     }
-    event.returnValue = {
-      type: "success",
-      message: "Successfully disconnected from Discord. You can now reconnect!",
+    event.returnValue = {}
+  })
+
+  ipc.on("openFolder", (event, package) => {
+    checkForImportantFiles()
+    try {
+      shell.openPath(path.join(app.getPath("userData") + "/profiles"))
+      event.returnValue = {
+        type: "success",
+        message: `Successfully opened the profiles folder in your fileexplorer`
+      }
+    } catch (error) {
+      event.returnValue = {
+        type: "error",
+        message: `Couldn't open the folder ${path.join(app.getPath("userData") + "/profiles")}!`,
+        error: error
+      }
     }
   })
 

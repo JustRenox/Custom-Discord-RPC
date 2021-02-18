@@ -1,4 +1,4 @@
-const { remote } = require('electron');
+const { remote, ipcRenderer } = require('electron');
 const ipc = require("electron").ipcRenderer;
 
 
@@ -161,22 +161,55 @@ button_two_checkbox.addEventListener("click", () => {
 })
 
 ///////////////////////////////////////////////////////////
+//  IPC requests from Main handler                      //
+//////////////////////////////////////////////////////////
+
+ipc.on("unexpectedDisconnect", (event, message) => {
+    if (message.type == "warning") {
+        notify({
+            type: "warning",
+            message: message.message,
+            delay: 5000
+        })
+    }
+    else if (message.type == "error" && message.message) {
+        notify({
+            type: "error",
+            message: message.message,
+            delay: 5000
+        })
+    }
+    event.returnValue = {
+        "amswer": "Recieved disconnection event and reset UI"
+    }
+    setTimeout(() => {
+        connect_button.disabled = false
+    }, 5000);
+    client_id.disabled = false
+    update_button.disabled = true
+    disconnect_button.disabled = true
+})
+
+///////////////////////////////////////////////////////////
 //  Handling the Status Buttons                         //
 //////////////////////////////////////////////////////////
 
 connect_button.addEventListener("click", () => {
+    connect_button.disabled = true
     const digitreg = /^\d+$/;
     if (client_id.value == "") {
+        connect_button.disabled = false
         return notify({
             type: "warning",
-            message: "ClientID must be defined in order to connect to the Discord.",
+            message: "The ClientID must be defined in order to connect to Discord.",
             delay: 5000
         })
     }
     if (digitreg.test(client_id.value) == false) {
+        connect_button.disabled = false
         return notify({
             type: "warning",
-            message: "ClientID can only consist of digits.",
+            message: "The ClientID can only consist of digits.",
             delay: 5000
         })
     }
@@ -190,22 +223,48 @@ connect_button.addEventListener("click", () => {
             message: reply.message,
             delay: 5000
         })
+        setTimeout(() => {
+            connect_button.disabled = false
+        }, 3000);
         return;
     } else if (reply.type == "success" && reply.message) {
         notify({
             type: "success",
             message: reply.message,
-            delay: 5000
+            delay: 3000
         })
         connect_button.disabled = true
         client_id.disabled = true
         update_button.disabled = false
-        disconnect_button.disabled = false
+        setTimeout(() => {
+            disconnect_button.disabled = false
+        }, 5000);
     }
 })
 
 update_button.addEventListener("click", () => {
-    console.info("Update")
+    if (validateInputs() == true) {
+        let package = {
+            activity: buildActivity(),
+            profile: saveProfiles()
+        }
+        let reply = ipc.sendSync("updateActivity", package)
+        if (reply.type == "success" && reply.message) {
+            notify({
+                type: "success",
+                message: reply.message,
+                delay: 3000
+            })
+        }
+        else if (reply.type == "error" && reply.message) {
+            reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
+            notify({
+                type: "error",
+                message: reply.message,
+                delay: 5000
+            })
+        }
+    }
 })
 
 load_button.addEventListener("show.bs.dropdown", () => {
@@ -237,7 +296,7 @@ save_button.addEventListener("click", () => {
             notify({
                 type: "success",
                 message: reply.message,
-                delay: 5000
+                delay: 3000
             })
         }
         else if (reply.type == "error" && reply.message) {
@@ -245,7 +304,7 @@ save_button.addEventListener("click", () => {
             notify({
                 type: "error",
                 message: reply.message,
-                delay: 10000
+                delay: 5000
             })
         }
     }
@@ -266,10 +325,12 @@ disconnect_button.addEventListener("click", () => {
         notify({
             type: "success",
             message: reply.message,
-            delay: 5000
+            delay: 3000
         })
     }
-    connect_button.disabled = false
+    setTimeout(() => {
+        connect_button.disabled = false
+    }, 5000);
     client_id.disabled = false
     update_button.disabled = true
     disconnect_button.disabled = true
@@ -288,7 +349,7 @@ function validateSavefileName(savefileName) {
                 let duplicat
                 profilenames.forEach(profile_Name => {
                     profile_Name = profile_Name.replace(/.json/, "")
-                    if (profile_Name == savefileName) {
+                    if (profile_Name.toLowerCase() == savefileName.toLowerCase()) {
                         duplicat = true
                         return false;
                     }
@@ -296,7 +357,7 @@ function validateSavefileName(savefileName) {
                 if (duplicat == true) {
                     notify({
                         type: "warning",
-                        message: "The is already a profile with that name!",
+                        message: "There is already a profile with that name!",
                         delay: 5000
                     })
                     return false;
@@ -307,7 +368,7 @@ function validateSavefileName(savefileName) {
             } else {
                 notify({
                     type: "warning",
-                    message: "The filename is too long (Max. 32 Characters)! The profile was not saved.",
+                    message: "The profile name is too long (Max. 32 Characters)! The profile was not saved.",
                     delay: 5000
                 })
                 return false;
@@ -419,8 +480,8 @@ function validateInputs() {
             throwerror("The Party-Size-Current field can only contain digits.")
             return false;
         }
-        if (parseInt(party_size_current.value) > 10000000000) {
-            throwerror("The Party-Size-Current can only be up to 10000000000.")
+        if (parseInt(party_size_current.value) > 100000000000) {
+            throwerror("The Party-Size-Current can only be up to 100,000,000,000.")
             return false;
         }
         if (party_size_maximum.value == "") {
@@ -431,8 +492,8 @@ function validateInputs() {
             throwerror("The Party-Size-Maximum field can only contain digits.")
             return false;
         }
-        if (parseInt(party_size_maximum.value) > 10000000000) {
-            throwerror("The Party-Size-Maximum can only be up to 10000000000.")
+        if (parseInt(party_size_maximum.value) > 100000000000) {
+            throwerror("The Party-Size-Maximum can only be up to 100,000,000,000.")
             return false;
         }
     }
@@ -470,6 +531,57 @@ function validateInputs() {
     return true;
 }
 
+function buildActivity() {
+    let activity = {}
+    if (state_checkbox.checked == true) {
+        activity.state = state.value
+    }
+    if (details_checkbox.checked == true) {
+        activity.details = details.value
+    }
+    if (timestamp_start_checkbox.checked == true) {
+        activity.timestamps = {}
+        activity.timestamps.start = parseInt(Date.now()) - parseInt(timestamp_start.value)
+    }
+    if (timestamp_end_checkbox.checked == true) {
+        if (!activity.timestamps) {
+            activity.timestamps = {}
+        }
+        activity.timestamps.end = parseInt(Date.now()) + parseInt(timestamp_end.value)
+    }
+    if (assets_large_image_checkbox.checked == true) {
+        activity.assets = {}
+        activity.assets.large_image = assets_large_image.value
+        if (assets_large_text_checkbox.checked == true) {
+            activity.assets.large_text = assets_large_text.value
+        }
+    }
+    if (assets_small_image_checkbox.checked == true) {
+        if (!activity.assets) {
+            activity.assets = {}
+        }
+        activity.assets.small_image = assets_small_image.value
+        if (assets_small_text_checkbox.checked == true) {
+            activity.assets.small_text = assets_small_text.value
+        }
+    }
+    if (party_size_checkbox.checked == true) {
+        activity.party = {}
+        activity.party.size = [parseInt(party_size_current.value), parseInt(party_size_maximum.value)]
+    }
+    if (button_one_checkbox.checked == true) {
+        activity.buttons = []
+        activity.buttons.push({ label: button_label_one.value, url: button_url_one.value })
+    }
+    if (button_two_checkbox.checked == true) {
+        if (!activity.buttons) {
+            activity.buttons = []
+        }
+        activity.buttons.push({ label: button_label_two.value, url: button_url_two.value })
+    }
+    return activity
+}
+
 function loadThisStatus() {
     let profile_name = this.id ? "default/last" : this.value
     let reply = ipc.sendSync("getProfile", profile_name);
@@ -478,7 +590,7 @@ function loadThisStatus() {
         notify({
             type: "success",
             message: reply.message,
-            delay: 5000
+            delay: 3000
         })
     }
     else if (reply.type == "error" && reply.message) {
@@ -486,7 +598,7 @@ function loadThisStatus() {
         notify({
             type: "error",
             message: reply.message,
-            delay: 10000
+            delay: 5000
         })
     }
 }
@@ -595,17 +707,25 @@ function rebuildDropdown() {
     dropdown.innerHTML = ""
     let list_item_a = document.createElement("li")
     let list_item_b = document.createElement("li")
+    let list_item_c = document.createElement("li")
     let content_a = document.createElement("a")
-    let content_b = document.createElement("hr")
-    content_a.innerHTML = "Last Used Profile"
+    let content_b = document.createElement("a")
+    let content_c = document.createElement("hr")
+    content_a.innerHTML = "Last Status"
     content_a.className = "dropdown-item loading_dropdown_option"
     content_a.onclick = loadThisStatus
     content_a.id = "default_Profile"
-    content_b.className = "dropdown-divider"
+    content_b.innerHTML = "Open Folder"
+    content_b.className = "dropdown-item"
+    content_b.onclick = openFolder
+    content_b.id = "default_Profile"
+    content_c.className = "dropdown-divider"
     list_item_a.appendChild(content_a)
     dropdown.appendChild(list_item_a)
     list_item_b.appendChild(content_b)
     dropdown.appendChild(list_item_b)
+    list_item_c.appendChild(content_c)
+    dropdown.appendChild(list_item_c)
 }
 
 function getProfiles() {
@@ -616,7 +736,7 @@ function getProfiles() {
         notify({
             type: "error",
             message: reply.message,
-            delay: 10000
+            delay: 5000
         })
         return []
     }
@@ -644,6 +764,7 @@ function notify(options) {
             delay = options.delay
         }
         let newtoast = document.createElement("div")
+        newtoast.setAttribute("class", "toast-div")
         newtoast.setAttribute("role", 'alert');
         newtoast.setAttribute('aria-live', 'assertive');
         newtoast.setAttribute('aria-atomic', 'true');
@@ -705,5 +826,25 @@ function notify(options) {
     } else {
         console.info("Invalid notification type!")
         return
+    }
+}
+
+function openFolder() {
+    let package = "Request to open the Profiles Folder"
+    let reply = ipc.sendSync("openFolder", package)
+    if (reply.type == "success" && reply.message) {
+        notify({
+            type: "success",
+            message: reply.message,
+            delay: 3000
+        })
+    }
+    else if (reply.type == "error" && reply.message) {
+        reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
+        notify({
+            type: "error",
+            message: reply.message,
+            delay: 5000
+        })
     }
 }

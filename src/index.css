@@ -61,13 +61,11 @@ nav #buttons #quit:hover {
 }
 
 input[type="text"]:disabled {
-  /* background-color: #282828 !important; */
-  background-color: #ff00000c !important;
+  background-color: #292929 !important;
 }
 
 input[type="text"] {
-  background-color: #00ff320c !important;
-  /* background-color: #1b1b1b !important; */
+  background-color: #1f1f1f !important;
   border-color: #363636 !important;
   color: #fff !important;
   user-select: text;
@@ -180,6 +178,10 @@ span.input-group-text.button_label {
 
 .notification-success {
   background-color: #257a1a;
+}
+
+.toast-container {
+  z-index: 50
 }
 
 .toast-body {
