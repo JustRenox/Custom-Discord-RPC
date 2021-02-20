@@ -9,7 +9,40 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "build-installer": "electron-builder"
+  },
+  "build": {
+    "appId": "betterdiscordstatus",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icons/logoicon.ico"
+    },
+    "nsis": {
+      "installerIcon": "assets/icons/logoicon.ico",
+      "uninstallerIcon": "assets/icons/logoicon.ico",
+      "uninstallDisplayName": "BetterDiscordStatus",
+      "license": "license.txt",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "asar": true,
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
   },
   "keywords": [],
   "repository": {
@@ -22,33 +55,6 @@
     "url": "https://github.com/JustRenox/BetterDiscordStatus/issues"
   },
   "homepage": "https://github.com/JustRenox/BetterDiscordStatus#readme",
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "betterdiscordstatus"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
-  },
   "dependencies": {
     "bootstrap-icons": "^1.3.0",
     "discord-rpc": "^3.2.0",
@@ -61,6 +67,7 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
-    "electron": "11.2.3"
+    "electron": "11.2.3",
+    "electron-builder": "^22.9.1"
   }
 }
