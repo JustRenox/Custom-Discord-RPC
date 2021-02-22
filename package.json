@@ -18,11 +18,11 @@
       "target": [
         "nsis"
       ],
-      "icon": "assets/icons/logoicon.ico"
+      "icon": "assets/icons/ico/icon_256x256.ico"
     },
     "nsis": {
-      "installerIcon": "assets/icons/logoicon.ico",
-      "uninstallerIcon": "assets/icons/logoicon.ico",
+      "installerIcon": "assets/icons/ico/icon_256x256.ico",
+      "uninstallerIcon": "assets/icons/ico/icon_256x256.ico",
       "uninstallDisplayName": "BetterDiscordStatus",
       "license": "license.txt",
       "oneClick": false,

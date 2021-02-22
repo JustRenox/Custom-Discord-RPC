@@ -15,9 +15,6 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-var logoicon = nativeImage.createFromPath(path.join(__dirname, "../assets/icons/logoicon.png"))
-logoicon.setTemplateImage(true);
-
 app.on('ready', () => {
   const gotTheLock = app.requestSingleInstanceLock()
 
@@ -37,7 +34,7 @@ app.on('ready', () => {
     height: 600,
     minHeight: 600,
     minWidth: 600,
-    icon: logoicon,
+    icon: path.join(__dirname, "../assets/icons/png/icon_1024x1024.png"),
     frame: false,
     webPreferences: {
       // devTools: false,
@@ -57,7 +54,7 @@ app.on('ready', () => {
 
   let tray = null
   app.whenReady().then(() => {
-    tray = new Tray(logoicon)
+    tray = new Tray(path.join(__dirname, "../assets/icons/png/icon_16x16.png"))
     const contextMenu = Menu.buildFromTemplate([
       {
         label: "Open Dashboard", click: async () => {
