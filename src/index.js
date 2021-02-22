@@ -37,7 +37,7 @@ app.on('ready', () => {
     icon: path.join(__dirname, "../assets/icons/png/icon_1024x1024.png"),
     frame: false,
     webPreferences: {
-      // devTools: false,
+      devTools: false,
       nodeIntegration: true,
       enableRemoteModule: true,
     }
@@ -49,8 +49,8 @@ app.on('ready', () => {
   // remove the Context Menu
   mainWindow.removeMenu()
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // // Open the DevTools.
+  // mainWindow.webContents.openDevTools();
 
   let tray = null
   app.whenReady().then(() => {
