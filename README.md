@@ -28,4 +28,8 @@ At the time of writing, using something like BetterDiscordStatus is not against 
 * I managed to get the macOS version to work, but that's about everything I could do since I don't own any Apple Desktop, so if you want to contribute and create a proper macOS Version feel free to do so.
 
 ## Preview
-![Here would be a preview of the app itself](https://media.discordapp.net/attachments/809971985580163082/813439828011515964/preview.png?width=812&height=941)
+![Here would be a preview of the status itself](https://media.discordapp.net/attachments/809971985580163082/813790045558538240/unknown.png)
+
+![Here would be a preview of the app itself](https://media.discordapp.net/attachments/809971985580163082/813790301764190208/unknown.png)
+
+Note: If both the Start and End Timestamp are turned on it will only show the time remaining.
