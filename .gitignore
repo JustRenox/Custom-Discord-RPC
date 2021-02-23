@@ -87,3 +87,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# electron-builder build output
+dist/
