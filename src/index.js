@@ -94,9 +94,6 @@ app.on('ready', () => {
     }
   });
 
-  // In this file you can include the rest of your app's specific main process
-  // code. You can also put them in separate files and import them here.
-
   function killClient() {
     try {
       client = null
@@ -173,7 +170,7 @@ app.on('ready', () => {
       content = profile.filter(file => file.endsWith('.json'))
       returnPackage = {
         type: "success",
-        message: `Successfully got the profile names`,
+        message: `Successfully got the profile names.`,
         content: content
       }
     } catch (error) {
@@ -200,7 +197,7 @@ app.on('ready', () => {
     } catch (error) {
       package = {
         type: "error",
-        message: "Couldn't find the profile you where looking for.",
+        message: "Couldn't find the profile you were looking for.",
         error: error
       }
     }
@@ -236,7 +233,7 @@ app.on('ready', () => {
         console.log(error)
         event.returnValue = {
           type: "error",
-          message: "Unexpected Error while trying to connect to the Discord RPC",
+          message: "Unexpected error while trying to connect to the Discord RPC.",
           error: error
         }
         return
@@ -245,7 +242,7 @@ app.on('ready', () => {
       if (body.message == 'Unknown Application' || body.code == 10002) {
         anwser = {
           type: "error",
-          message: "Unknown Application. Please check if you entered the right ClientID",
+          message: "Unknown application. Please check if you entered the right ClientID.",
         }
         event.returnValue = anwser
         return
@@ -257,7 +254,7 @@ app.on('ready', () => {
           killClient()
           event.returnValue = {
             type: "error",
-            message: "Unexpected Error while trying to connect to the Discord RPC",
+            message: "Unexpected error while trying to connect to the Discord RPC",
             error: error
           }
         }
@@ -284,6 +281,7 @@ app.on('ready', () => {
               message: "The connection to Discord was closed!",
             }
             mainWindow.webContents.send("unexpectedDisconnect", message)
+            mainWindow.show()
           })
           return
         })
@@ -319,7 +317,7 @@ app.on('ready', () => {
         if (error) {
           returnPackage = {
             type: "error",
-            message: "There was an error while saving the profile as 'Last Used Profile'",
+            message: "There was an error while saving the profile as 'Last Status'",
             error: error
           }
           event.returnValue = returnPackage
@@ -363,7 +361,7 @@ app.on('ready', () => {
       shell.openPath(path.join(app.getPath("userData") + "/profiles"))
       event.returnValue = {
         type: "success",
-        message: `Successfully opened the profiles folder in your fileexplorer`
+        message: `Successfully opened the profiles folder in your file explorer.`
       }
     } catch (error) {
       event.returnValue = {

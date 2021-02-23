@@ -23,9 +23,9 @@ The app allows you to put in your Rich Presence ClientID and all the individual 
 At the time of writing, using something like BetterDiscordStatus is not against Discord's Terms of Service since this is not automating your account in any way, shape, or form.
 
 ## Others
-* The image assets will take a few minutes until they are uploaded to discord so you might have to wait up to 15 minutes or longer. 
+* The image assets will take a few minutes until they are uploaded to Discord, so you might have to wait up to 15 minutes or longer. 
 * If the large or small image isn't showing even though it's turned on, it's most likely because the name is wrong or it isn't in the assets of the application in the [Discord Developer Portal](https://discord.com/developers/applications/) yet.
-* I managed to get the macOS version to work but that's about everything I was able to do since I don't own any Apple Desktop so if you want to contribute and create a propper macOS Version feel free to do so.
+* I managed to get the macOS version to work, but that's about everything I could do since I don't own any Apple Desktop, so if you want to contribute and create a proper macOS Version feel free to do so.
 
 ## Preview
 ![Here would be a preview of the app itself](https://media.discordapp.net/attachments/809971985580163082/813439828011515964/preview.png?width=812&height=941)

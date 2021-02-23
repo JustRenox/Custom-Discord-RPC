@@ -201,7 +201,7 @@ connect_button.addEventListener("click", () => {
         connect_button.disabled = false
         return notify({
             type: "warning",
-            message: "The ClientID must be defined in order to connect to Discord.",
+            message: "The ClientID must be defined to connect to Discord.",
             delay: 5000
         })
     }
@@ -368,7 +368,7 @@ function validateSavefileName(savefileName) {
             } else {
                 notify({
                     type: "warning",
-                    message: "The profile name is too long (Max. 32 Characters)! The profile was not saved.",
+                    message: "The profile name is too long (Max. 32 Characters)! The profile was therefore not saved.",
                     delay: 5000
                 })
                 return false;
@@ -376,7 +376,7 @@ function validateSavefileName(savefileName) {
         } else {
             notify({
                 type: "warning",
-                message: "The filename is too short (Min. 5 Characters)! The profile was not saved.",
+                message: "The filename is too short (Min. 5 Characters)! The profile was therefore not saved.",
                 delay: 5000
             })
             return false;
@@ -384,7 +384,7 @@ function validateSavefileName(savefileName) {
     } else {
         notify({
             type: "warning",
-            message: "Invalid character! The profile was not saved.",
+            message: "Invalid character! The profile was therefore not saved.",
             delay: 5000
         })
         return false;
@@ -411,7 +411,7 @@ function validateInputs() {
 
     if (details_checkbox.checked == true) {
         if (details.value == "") {
-            throwerror("The State field can't be empty.")
+            throwerror("The Details field can't be empty.")
             return false;
         }
     }
@@ -500,30 +500,30 @@ function validateInputs() {
 
     if (button_one_checkbox.checked == true) {
         if (button_label_one.value == "") {
-            throwerror("The Button-#1-Label field cant be empty")
+            throwerror("The Button-#1-Label field can't be empty.")
             return false;
         }
         if (button_url_one.value == "") {
-            throwerror("The Button-#1-URL field cant be empty")
+            throwerror("The Button-#1-URL field can't be empty.")
             return false;
         }
         if (urlreg.test(button_url_one.value) == false) {
-            throwerror("The Button-#1-URL field can only contain a valid HTTP link")
+            throwerror("The Button-#1-URL field can only contain a valid HTTP link.")
             return false;
         }
     }
 
     if (button_two_checkbox.checked == true) {
         if (button_label_two.value == "") {
-            throwerror("The Button-#2-Label field cant be empty")
+            throwerror("The Button-#2-Label field can't be empty.")
             return false;
         }
         if (button_url_two.value == "") {
-            throwerror("The Button-#2-URL field cant be empty")
+            throwerror("The Button-#2-URL field can't be empty.")
             return false;
         }
         if (urlreg.test(button_url_two.value) == false) {
-            throwerror("The Button-#2-URL field can only contain a valid HTTP link")
+            throwerror("The Button-#2-URL field can only contain a valid HTTP link.")
             return false;
         }
     }
