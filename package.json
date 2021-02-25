@@ -1,7 +1,7 @@
 {
   "name": "custom-discord-rpc",
   "productName": "Custom Discord RPC",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple electron app to give users the ability to have a nicer looking discord status",
   "main": "src/index.js",
   "scripts": {
