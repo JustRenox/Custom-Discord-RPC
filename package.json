@@ -1,6 +1,6 @@
 {
-  "name": "betterdiscordstatus",
-  "productName": "BetterDiscordStatus",
+  "name": "custom-discord-rpc",
+  "productName": "Custom Discord RPC",
   "version": "1.0.0",
   "description": "A simple electron app to give users the ability to have a nicer looking discord status",
   "main": "src/index.js",
@@ -13,7 +13,7 @@
     "build-installer": "electron-builder"
   },
   "build": {
-    "appId": "betterdiscordstatus",
+    "appId": "custom-discord-rpc",
     "win": {
       "target": [
         "nsis"
@@ -30,7 +30,7 @@
     "nsis": {
       "installerIcon": "assets/icons/ico/icon_256x256.ico",
       "uninstallerIcon": "assets/icons/ico/icon_256x256.ico",
-      "uninstallDisplayName": "BetterDiscordStatus",
+      "uninstallDisplayName": "Custom Discord RPC",
       "license": "license.txt",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
@@ -54,14 +54,14 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JustRenox/BetterDiscordStatus.git"
+    "url": "git+https://github.com/JustRenox/Custom-Discord-RPC.git"
   },
   "author": "Renox",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JustRenox/BetterDiscordStatus/issues"
+    "url": "https://github.com/JustRenox/Custom-Discord-RPC/issues"
   },
-  "homepage": "https://github.com/JustRenox/BetterDiscordStatus#readme",
+  "homepage": "https://github.com/JustRenox/Custom-Discord-RPC#readme",
   "dependencies": {
     "bootstrap-icons": "^1.3.0",
     "discord-rpc": "^3.2.0",

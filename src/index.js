@@ -69,7 +69,7 @@ app.on('ready', () => {
         }
       }
     ])
-    tray.setToolTip('BetterDiscordStatus')
+    tray.setToolTip('Custom Discord RPC')
     tray.setContextMenu(contextMenu)
     tray.on("click", () => {
       mainWindow.show()
