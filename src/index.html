@@ -22,7 +22,8 @@
       <!-- Titel -->
       <div class="col p-0 m-0 ps-2 darkmode" style="text-align: left; -webkit-app-region: drag;">
         <div class="pe-2">
-          <img src="../assets/icons/png/icon_1024x1024.png" alt="" width="30" height="30" class="d-inline-block align-top">
+          <img src="../assets/icons/png/icon_1024x1024.png" alt="" width="30" height="30"
+            class="d-inline-block align-top">
           <span style="font-size: 20px;">Custom Discord RPC</span>
         </div>
       </div>
@@ -48,8 +49,10 @@
       <!-- Client ID -->
       <h1 class="display-6">ClientID</h1>
       <div class="input-group mb-3 input-group-sm">
-        <span class="input-group-text clientid-label">ClientID</span>
+        <span class="input-group-text clientid-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The Client ID of your Discord Rich Presence application.">ClientID</span>
         <input type="text" class="form-control" id="client_id">
+        <span id="clickForHelp" class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Open guide for more information on the ClientID.">?</span>
       </div>
       <hr>
     </div>
@@ -63,7 +66,8 @@
             <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="details_checkbox">
           </div>
         </div>
-        <span class="input-group-text custom-label">Details</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The line that goes after your application's name.">Details</span>
         <input type="text" class="form-control" id="details" disabled>
       </div>
       <hr>
@@ -78,7 +82,8 @@
             <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="state_checkbox">
           </div>
         </div>
-        <span class="input-group-text custom-label">State</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The line that goes after the details.">State</span>
         <input type="text" class="form-control" id="state" disabled>
       </div>
       <hr>
@@ -93,20 +98,26 @@
             <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="timestamp_start_checkbox">
           </div>
         </div>
-        <span class="input-group-text custom-label">Start</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="Displays the amount of time that your Rich Presence is enabled for.">Start</span>
         <input type="text" class="form-control" id="timestamp_start" disabled>
-        <span class="input-group-text">ms</span>
+        <span class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The current time - the input in milliseconds.">ms</span>
       </div>
 
       <div class="input-group mb-3 input-group-sm">
         <div class="input-group-text">
           <div class="form-switch">
-            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="timestamp_end_checkbox">
+            <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="timestamp_end_checkbox"
+              data-bs-toggle="tooltip" data-bs-placement="bottom"
+              title="If you turn the End Timestamp on the Start Timestamp will not be visible.">
           </div>
         </div>
-        <span class="input-group-text custom-label">End</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="Displays the amount that is remaining for your Rich Presence.">End</span>
         <input type="text" class="form-control" id="timestamp_end" disabled>
-        <span class="input-group-text">ms</span>
+        <span class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The current time + the input in milliseconds.">ms</span>
       </div>
       <hr>
     </div>
@@ -120,7 +131,8 @@
             <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="assets_large_image_checkbox">
           </div>
         </div>
-        <span class="input-group-text custom-label">Large Image</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The name of the asset for your large image.">Large Image</span>
         <input type="text" class="form-control" id="assets_large_image" disabled>
       </div>
       <div class="input-group mb-3 input-group-sm">
@@ -130,7 +142,8 @@
               disabled>
           </div>
         </div>
-        <span class="input-group-text custom-label">Large Text</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The text that appears when your large image is hovered over.">Large Text</span>
         <input type="text" class="form-control" id="assets_large_text" disabled>
       </div>
       <div class="input-group mb-3 input-group-sm">
@@ -139,7 +152,8 @@
             <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="assets_small_image_checkbox">
           </div>
         </div>
-        <span class="input-group-text custom-label">Small Image</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The name of the asset for your small image.">Small Image</span>
         <input type="text" class="form-control" id="assets_small_image" disabled>
       </div>
       <div class="input-group mb-3 input-group-sm">
@@ -148,7 +162,8 @@
               id="assets_small_text_checkbox" disabled>
           </div>
         </div>
-        <span class="input-group-text custom-label">Small Text</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The text that appears when your small image is hovered over.">Small Text</span>
         <input type="text" class="form-control" id="assets_small_text" disabled>
       </div>
       <hr>
@@ -163,7 +178,8 @@
             <input class="form-check-input" type="checkbox" value="" tabindex="-1" id="party_size_checkbox">
           </div>
         </div>
-        <span class="input-group-text custom-label">Current and Maximum</span>
+        <span class="input-group-text custom-label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The '(x of y)' behind the the state.">Current and Maximum</span>
         <input type="text" class="form-control" id="party_size_current" disabled>
         <input type="text" class="form-control" id="party_size_maximum" disabled>
       </div>
@@ -180,7 +196,8 @@
           </div>
         </div>
         <span class="input-group-text" style="width: 34px;">#1</span>
-        <span class="input-group-text button_label">Label and URL</span>
+        <span class="input-group-text button_label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The Label for the first button followed by the URL for the first button.">Label and URL</span>
         <input type="text" class="form-control" id="button_label_one" disabled>
         <input type="text" class="form-control" id="button_url_one" disabled>
       </div>
@@ -191,7 +208,8 @@
           </div>
         </div>
         <span class="input-group-text" style="width: 34px;">#2</span>
-        <span class="input-group-text button_label">Label and URL</span>
+        <span class="input-group-text button_label" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          title="The Label for the second button followed by the URL for the second button.">Label and URL</span>
         <input type="text" class="form-control" id="button_label_two" disabled>
         <input type="text" class="form-control" id="button_url_two" disabled>
       </div>

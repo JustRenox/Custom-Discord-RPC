@@ -1,6 +1,14 @@
-const { remote, ipcRenderer } = require('electron');
+const { remote, ipcRenderer, shell } = require('electron');
 const ipc = require("electron").ipcRenderer;
 
+///////////////////////////////////////////////////////////
+// Initializing all tooltips                            //
+//////////////////////////////////////////////////////////
+
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
 
 ///////////////////////////////////////////////////////////
 // Window button handler                                //
@@ -87,6 +95,10 @@ let update_button = document.getElementById("update_button")
 let save_button = document.getElementById("save_button")
 let load_button = document.getElementById("load_button")
 let disconnect_button = document.getElementById("disconnect_button")
+//---------------------------------------------------------
+
+//Help-and-User-Guidance-----------------------------------
+let clickForHelp = document.getElementById("clickForHelp")
 //---------------------------------------------------------
 
 //Status-Saving-Menu---------------------------------------
@@ -233,6 +245,28 @@ connect_button.addEventListener("click", () => {
             message: reply.message,
             delay: 3000
         })
+        if (validateInputs() == true) {
+            let package = {
+                activity: buildActivity(),
+                profile: saveProfiles()
+            }
+            let reply = ipc.sendSync("updateActivity", package)
+            if (reply.type == "success" && reply.message) {
+                notify({
+                    type: "success",
+                    message: reply.message,
+                    delay: 3000
+                })
+            }
+            else if (reply.type == "error" && reply.message) {
+                reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
+                notify({
+                    type: "error",
+                    message: reply.message,
+                    delay: 5000
+                })
+            }
+        }
         connect_button.disabled = true
         client_id.disabled = true
         update_button.disabled = false
@@ -334,6 +368,10 @@ disconnect_button.addEventListener("click", () => {
     client_id.disabled = false
     update_button.disabled = true
     disconnect_button.disabled = true
+})
+
+clickForHelp.addEventListener("click", () => {
+    shell.openExternal("https://github.com/JustRenox/Custom-Discord-RPC#preparation")
 })
 
 ///////////////////////////////////////////////////////////
