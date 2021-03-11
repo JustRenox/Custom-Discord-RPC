@@ -5,8 +5,8 @@ const ipc = require("electron").ipcRenderer;
 // Initializing all tooltips                            //
 //////////////////////////////////////////////////////////
 
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
@@ -14,22 +14,22 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 // Window button handler                                //
 //////////////////////////////////////////////////////////
 
-var minimize = document.querySelector("#minimize");
-var maximize = document.querySelector("#maximize");
-var quit = document.querySelector("#quit");
+let minimize = document.querySelector("#minimize");
+let maximize = document.querySelector("#maximize");
+let quit = document.querySelector("#quit");
 
 minimize.addEventListener("click", () => {
-    var win = remote.BrowserWindow.getFocusedWindow();
+    let win = remote.BrowserWindow.getFocusedWindow();
     win.minimize();
 });
 
 maximize.addEventListener("click", () => {
-    var win = remote.BrowserWindow.getFocusedWindow();
+    let win = remote.BrowserWindow.getFocusedWindow();
     win.setFullScreen(!win.isFullScreen());
 });
 
 quit.addEventListener("click", () => {
-    var win = remote.BrowserWindow.getFocusedWindow();
+    let win = remote.BrowserWindow.getFocusedWindow();
     win.close();
 });
 
@@ -102,7 +102,7 @@ let clickForHelp = document.getElementById("clickForHelp")
 //---------------------------------------------------------
 
 //Status-Saving-Menu---------------------------------------
-var saveModal = new bootstrap.Modal(document.getElementById('savinginput'), { keyboard: false })
+let saveModal = new bootstrap.Modal(document.getElementById('savinginput'), { keyboard: false })
 //---------------------------------------------------------
 
 ///////////////////////////////////////////////////////////
@@ -110,25 +110,25 @@ var saveModal = new bootstrap.Modal(document.getElementById('savinginput'), { ke
 //////////////////////////////////////////////////////////
 
 state_checkbox.addEventListener("click", () => {
-    state.disabled = state_checkbox.checked ? false : true
+    state.disabled = !state_checkbox.checked
 })
 
 details_checkbox.addEventListener("click", () => {
-    details.disabled = details_checkbox.checked ? false : true
+    details.disabled = !details_checkbox.checked
 })
 
 timestamp_start_checkbox.addEventListener("click", () => {
-    timestamp_start.disabled = timestamp_start_checkbox.checked ? false : true
+    timestamp_start.disabled = !timestamp_start_checkbox.checked
 })
 timestamp_end_checkbox.addEventListener("click", () => {
-    timestamp_end.disabled = timestamp_end_checkbox.checked ? false : true
+    timestamp_end.disabled = !timestamp_end_checkbox.checked
 })
 
 assets_large_image_checkbox.addEventListener("click", () => {
     function activatedL() {
         assets_large_image.disabled = false
         assets_large_text_checkbox.disabled = false
-        assets_large_text.disabled = assets_large_text_checkbox.checked ? false : true
+        assets_large_text.disabled = !assets_large_text_checkbox.checked
     }
     function deactivatedL() {
         assets_large_image.disabled = true
@@ -138,14 +138,14 @@ assets_large_image_checkbox.addEventListener("click", () => {
     assets_large_image_checkbox.checked ? activatedL() : deactivatedL()
 })
 assets_large_text_checkbox.addEventListener("click", () => {
-    assets_large_text.disabled = assets_large_text_checkbox.checked ? false : true
+    assets_large_text.disabled = !assets_large_text_checkbox.checked
 })
 
 assets_small_image_checkbox.addEventListener("click", () => {
     function activatedS() {
         assets_small_image.disabled = false
         assets_small_text_checkbox.disabled = false
-        assets_small_text.disabled = assets_small_text_checkbox.checked ? false : true
+        assets_small_text.disabled = !assets_small_text_checkbox.checked
     }
     function deactivatedS() {
         assets_small_image.disabled = true
@@ -155,21 +155,21 @@ assets_small_image_checkbox.addEventListener("click", () => {
     assets_small_image_checkbox.checked ? activatedS() : deactivatedS()
 })
 assets_small_text_checkbox.addEventListener("click", () => {
-    assets_small_text.disabled = assets_small_text_checkbox.checked ? false : true
+    assets_small_text.disabled = !assets_small_text_checkbox.checked
 })
 
 party_size_checkbox.addEventListener("click", () => {
-    party_size_current.disabled = party_size_checkbox.checked ? false : true
-    party_size_maximum.disabled = party_size_checkbox.checked ? false : true
+    party_size_current.disabled = !party_size_checkbox.checked
+    party_size_maximum.disabled = !party_size_checkbox.checked
 })
 
 button_one_checkbox.addEventListener("click", () => {
-    button_label_one.disabled = button_one_checkbox.checked ? false : true
-    button_url_one.disabled = button_one_checkbox.checked ? false : true
+    button_label_one.disabled = !button_one_checkbox.checked
+    button_url_one.disabled = !button_one_checkbox.checked
 })
 button_two_checkbox.addEventListener("click", () => {
-    button_label_two.disabled = button_two_checkbox.checked ? false : true
-    button_url_two.disabled = button_two_checkbox.checked ? false : true
+    button_label_two.disabled = !button_two_checkbox.checked
+    button_url_two.disabled = !button_two_checkbox.checked
 })
 
 ///////////////////////////////////////////////////////////
@@ -177,14 +177,14 @@ button_two_checkbox.addEventListener("click", () => {
 //////////////////////////////////////////////////////////
 
 ipc.on("unexpectedDisconnect", (event, message) => {
-    if (message.type == "warning") {
+    if (message.type === "warning") {
         notify({
             type: "warning",
             message: message.message,
             delay: 5000
         })
     }
-    else if (message.type == "error" && message.message) {
+    else if (message.type === "error" && message.message) {
         notify({
             type: "error",
             message: message.message,
@@ -192,7 +192,7 @@ ipc.on("unexpectedDisconnect", (event, message) => {
         })
     }
     event.returnValue = {
-        "amswer": "Recieved disconnection event and reset UI"
+        "answer": "Received disconnection event and reset UI"
     }
     setTimeout(() => {
         connect_button.disabled = false
@@ -209,7 +209,7 @@ ipc.on("unexpectedDisconnect", (event, message) => {
 connect_button.addEventListener("click", () => {
     connect_button.disabled = true
     const digitreg = /^\d+$/;
-    if (client_id.value == "") {
+    if (client_id.value === "") {
         connect_button.disabled = false
         return notify({
             type: "warning",
@@ -217,7 +217,7 @@ connect_button.addEventListener("click", () => {
             delay: 5000
         })
     }
-    if (digitreg.test(client_id.value) == false) {
+    if (digitreg.test(client_id.value) === false) {
         connect_button.disabled = false
         return notify({
             type: "warning",
@@ -225,11 +225,11 @@ connect_button.addEventListener("click", () => {
             delay: 5000
         })
     }
-    let package = {
+    let p = {
         client_id: client_id.value
     }
-    let reply = ipc.sendSync("connectRPC", package);
-    if (reply.type == "error" && reply.message) {
+    let reply = ipc.sendSync("connectRPC", p);
+    if (reply.type === "error" && reply.message) {
         notify({
             type: "error",
             message: reply.message,
@@ -238,27 +238,26 @@ connect_button.addEventListener("click", () => {
         setTimeout(() => {
             connect_button.disabled = false
         }, 3000);
-        return;
-    } else if (reply.type == "success" && reply.message) {
+    } else if (reply.type === "success" && reply.message) {
         notify({
             type: "success",
             message: reply.message,
             delay: 3000
         })
-        if (validateInputs() == true) {
-            let package = {
+        if (validateInputs() === true) {
+            let p = {
                 activity: buildActivity(),
                 profile: saveProfiles()
             }
-            let reply = ipc.sendSync("updateActivity", package)
-            if (reply.type == "success" && reply.message) {
+            let reply = ipc.sendSync("updateActivity", p)
+            if (reply.type === "success" && reply.message) {
                 notify({
                     type: "success",
                     message: reply.message,
                     delay: 3000
                 })
             }
-            else if (reply.type == "error" && reply.message) {
+            else if (reply.type === "error" && reply.message) {
                 reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
                 notify({
                     type: "error",
@@ -277,20 +276,20 @@ connect_button.addEventListener("click", () => {
 })
 
 update_button.addEventListener("click", () => {
-    if (validateInputs() == true) {
-        let package = {
+    if (validateInputs() === true) {
+        let p = {
             activity: buildActivity(),
             profile: saveProfiles()
         }
-        let reply = ipc.sendSync("updateActivity", package)
-        if (reply.type == "success" && reply.message) {
+        let reply = ipc.sendSync("updateActivity", p)
+        if (reply.type === "success" && reply.message) {
             notify({
                 type: "success",
                 message: reply.message,
                 delay: 3000
             })
         }
-        else if (reply.type == "error" && reply.message) {
+        else if (reply.type === "error" && reply.message) {
             reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
             notify({
                 type: "error",
@@ -305,35 +304,34 @@ load_button.addEventListener("show.bs.dropdown", () => {
     rebuildDropdown()
     let profiles = getProfiles()
     profiles.forEach(e => {
-        profile_name = e.replace(/.json/, "")
+        let profile_name = e.replace(/.json/, "")
         createNewDropdownElement(profile_name)
     });
 })
 
 save_button.addEventListener("click", () => {
-    savefileName = document.getElementById("saving_profile").value
-    if (validateSavefileName(savefileName) == false) {
-        //Returning if the Name is invalid (Notification gets created inside the function for more specific rrror)
-        document.getElementById("saving_profile").value = ""
-        saveModal.hide()
-        return
+    let saveFileName = document.getElementById("saving_profile").value;
+    if (validateSavefileName(saveFileName) === false) {
+        //Returning if the Name is invalid (Notification gets created inside the function for more specific error)
+        document.getElementById("saving_profile").value = "";
+        saveModal.hide();
     }
     else {
-        let package = {
-            name: savefileName,
+        let p = {
+            name: saveFileName,
             content: saveProfiles()
         }
-        let reply = ipc.sendSync("saveProfile", package);
+        let reply = ipc.sendSync("saveProfile", p);
         document.getElementById("saving_profile").value = ""
         saveModal.hide()
-        if (reply.type == "success" && reply.message) {
+        if (reply.type === "success" && reply.message) {
             notify({
                 type: "success",
                 message: reply.message,
                 delay: 3000
             })
         }
-        else if (reply.type == "error" && reply.message) {
+        else if (reply.type === "error" && reply.message) {
             reply.error ? console.error(reply.error) : console.warn("There was an error but no error was passed");
             notify({
                 type: "error",
@@ -345,9 +343,9 @@ save_button.addEventListener("click", () => {
 })
 
 disconnect_button.addEventListener("click", () => {
-    let package = "Requesting destruction of current client and creation of a new client."
-    let reply = ipc.sendSync("disconnectRPC", package);
-    if (reply.type == "error" && reply.message) {
+    let p = "Requesting destruction of current client and creation of a new client."
+    let reply = ipc.sendSync("disconnectRPC", p);
+    if (reply.type === "error" && reply.message) {
         reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
         notify({
             type: "error",
@@ -355,7 +353,7 @@ disconnect_button.addEventListener("click", () => {
             delay: 5000
         })
         return;
-    } else if (reply.type == "success" && reply.message) {
+    } else if (reply.type === "success" && reply.message) {
         notify({
             type: "success",
             message: reply.message,
@@ -378,21 +376,20 @@ clickForHelp.addEventListener("click", () => {
 //  Functions                                           //
 //////////////////////////////////////////////////////////
 
-function validateSavefileName(savefileName) {
-    lettercheck = /^[A-Za-z0-9]*$/
-    if (lettercheck.test(savefileName) == true) {
-        if (savefileName.length >= 5) {
-            if (savefileName.length <= 32) {
-                profilenames = getProfiles()
-                let duplicat
+function validateSavefileName(saveFileName) {
+    if (/^[A-Za-z0-9]*$/.test(saveFileName) === true) {
+        if (saveFileName.length >= 5) {
+            if (saveFileName.length <= 32) {
+                let profilenames = getProfiles()
+                let duplicat = false;
                 profilenames.forEach(profile_Name => {
                     profile_Name = profile_Name.replace(/.json/, "")
-                    if (profile_Name.toLowerCase() == savefileName.toLowerCase()) {
+                    if (profile_Name.toLowerCase() === saveFileName.toLowerCase()) {
                         duplicat = true
                         return false;
                     }
                 });
-                if (duplicat == true) {
+                if (duplicat === true) {
                     notify({
                         type: "warning",
                         message: "There is already a profile with that name!",
@@ -430,7 +427,7 @@ function validateSavefileName(savefileName) {
 }
 
 function validateInputs() {
-    function throwerror(message) {
+    function throwError(message) {
         notify({
             type: "warning",
             message: message,
@@ -438,130 +435,130 @@ function validateInputs() {
         })
     }
     const digitreg = /^\d+$/;
-    const urlreg = /(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,6}(\/\S*)?$/;
+    const urlreg = /(http|https):\/\/[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,6}(\/\S*)?$/;
 
-    if (state_checkbox.checked == true) {
-        if (state.value == "") {
-            throwerror("The State field can't be empty.")
+    if (state_checkbox.checked === true) {
+        if (state.value === "") {
+            throwError("The State field can't be empty.")
             return false;
         }
     }
 
-    if (details_checkbox.checked == true) {
-        if (details.value == "") {
-            throwerror("The Details field can't be empty.")
+    if (details_checkbox.checked === true) {
+        if (details.value === "") {
+            throwError("The Details field can't be empty.")
             return false;
         }
     }
 
-    if (timestamp_start_checkbox.checked == true) {
-        if (timestamp_start.value == "") {
-            throwerror("The Timestamp-Start field can't be empty.")
+    if (timestamp_start_checkbox.checked === true) {
+        if (timestamp_start.value === "") {
+            throwError("The Timestamp-Start field can't be empty.")
             return false;
         }
-        if (digitreg.test(timestamp_start.value) == false) {
-            throwerror("The Timestamp-Start field can only contain digits.")
+        if (digitreg.test(timestamp_start.value) === false) {
+            throwError("The Timestamp-Start field can only contain digits.")
             return false;
         }
         if (parseInt(timestamp_start.value) > 86400000) {
-            throwerror("The Timestamp-Start field can only be up to 86400000ms.")
+            throwError("The Timestamp-Start field can only be up to 86400000ms.")
             return false;
         }
     }
 
-    if (timestamp_end_checkbox.checked == true) {
-        if (timestamp_end.value == "") {
-            throwerror("The Timestamp-End field can't be empty.")
+    if (timestamp_end_checkbox.checked === true) {
+        if (timestamp_end.value === "") {
+            throwError("The Timestamp-End field can't be empty.")
             return false;
         }
-        if (digitreg.test(timestamp_end.value) == false) {
-            throwerror("The Timestamp-End field can only contain digits.")
+        if (digitreg.test(timestamp_end.value) === false) {
+            throwError("The Timestamp-End field can only contain digits.")
             return false;
         }
         if (parseInt(timestamp_end.value) > 86400000) {
-            throwerror("The Timestamp-End field can only be up to 86400000ms.")
+            throwError("The Timestamp-End field can only be up to 86400000ms.")
             return false;
         }
     }
 
-    if (assets_large_image_checkbox.checked == true) {
-        if (assets_large_image.value == "") {
-            throwerror("The Large-Image field can't be empty.")
+    if (assets_large_image_checkbox.checked === true) {
+        if (assets_large_image.value === "") {
+            throwError("The Large-Image field can't be empty.")
             return false;
         }
     }
-    if (assets_large_text_checkbox.checked == true && assets_large_image_checkbox.checked == true) {
-        if (assets_large_image.value == "") {
-            throwerror("The Large-Text field can't be empty.")
+    if (assets_large_text_checkbox.checked === true && assets_large_image_checkbox.checked === true) {
+        if (assets_large_image.value === "") {
+            throwError("The Large-Text field can't be empty.")
             return false;
         }
     }
-    if (assets_small_image_checkbox.checked == true) {
-        if (assets_small_image.value == "") {
-            throwerror("The Small-Image field can't be empty.")
+    if (assets_small_image_checkbox.checked === true) {
+        if (assets_small_image.value === "") {
+            throwError("The Small-Image field can't be empty.")
             return false;
         }
     }
-    if (assets_small_text_checkbox.checked == true && assets_small_image_checkbox.checked == true) {
-        if (assets_small_text.value == "") {
-            throwerror("The Small-Text field can't be empty.")
+    if (assets_small_text_checkbox.checked === true && assets_small_image_checkbox.checked === true) {
+        if (assets_small_text.value === "") {
+            throwError("The Small-Text field can't be empty.")
             return false;
         }
     }
 
-    if (party_size_checkbox.checked == true) {
-        if (party_size_current.value == "") {
-            throwerror("The Party-Size-Current field can't be empty.")
+    if (party_size_checkbox.checked === true) {
+        if (party_size_current.value === "") {
+            throwError("The Party-Size-Current field can't be empty.")
             return false;
         }
-        if (digitreg.test(party_size_current.value) == false) {
-            throwerror("The Party-Size-Current field can only contain digits.")
+        if (digitreg.test(party_size_current.value) === false) {
+            throwError("The Party-Size-Current field can only contain digits.")
             return false;
         }
         if (parseInt(party_size_current.value) > 100000000000) {
-            throwerror("The Party-Size-Current can only be up to 100,000,000,000.")
+            throwError("The Party-Size-Current can only be up to 100,000,000,000.")
             return false;
         }
-        if (party_size_maximum.value == "") {
-            throwerror("The Party-Size-Maximum field can't be empty.")
+        if (party_size_maximum.value === "") {
+            throwError("The Party-Size-Maximum field can't be empty.")
             return false;
         }
-        if (digitreg.test(party_size_maximum.value) == false) {
-            throwerror("The Party-Size-Maximum field can only contain digits.")
+        if (digitreg.test(party_size_maximum.value) === false) {
+            throwError("The Party-Size-Maximum field can only contain digits.")
             return false;
         }
         if (parseInt(party_size_maximum.value) > 100000000000) {
-            throwerror("The Party-Size-Maximum can only be up to 100,000,000,000.")
+            throwError("The Party-Size-Maximum can only be up to 100,000,000,000.")
             return false;
         }
     }
 
-    if (button_one_checkbox.checked == true) {
-        if (button_label_one.value == "") {
-            throwerror("The Button-#1-Label field can't be empty.")
+    if (button_one_checkbox.checked === true) {
+        if (button_label_one.value === "") {
+            throwError("The Button-#1-Label field can't be empty.")
             return false;
         }
-        if (button_url_one.value == "") {
-            throwerror("The Button-#1-URL field can't be empty.")
+        if (button_url_one.value === "") {
+            throwError("The Button-#1-URL field can't be empty.")
             return false;
         }
-        if (urlreg.test(button_url_one.value) == false) {
-            throwerror("The Button-#1-URL field can only contain a valid HTTP link.")
+        if (urlreg.test(button_url_one.value) === false) {
+            throwError("The Button-#1-URL field can only contain a valid HTTP link.")
             return false;
         }
     }
 
-    if (button_two_checkbox.checked == true) {
-        if (button_label_two.value == "") {
-            throwerror("The Button-#2-Label field can't be empty.")
+    if (button_two_checkbox.checked === true) {
+        if (button_label_two.value === "") {
+            throwError("The Button-#2-Label field can't be empty.")
             return false;
         }
-        if (button_url_two.value == "") {
-            throwerror("The Button-#2-URL field can't be empty.")
+        if (button_url_two.value === "") {
+            throwError("The Button-#2-URL field can't be empty.")
             return false;
         }
-        if (urlreg.test(button_url_two.value) == false) {
-            throwerror("The Button-#2-URL field can only contain a valid HTTP link.")
+        if (urlreg.test(button_url_two.value) === false) {
+            throwError("The Button-#2-URL field can only contain a valid HTTP link.")
             return false;
         }
     }
@@ -571,47 +568,47 @@ function validateInputs() {
 
 function buildActivity() {
     let activity = {}
-    if (state_checkbox.checked == true) {
+    if (state_checkbox.checked === true) {
         activity.state = state.value
     }
-    if (details_checkbox.checked == true) {
+    if (details_checkbox.checked === true) {
         activity.details = details.value
     }
-    if (timestamp_start_checkbox.checked == true) {
+    if (timestamp_start_checkbox.checked === true) {
         activity.timestamps = {}
-        activity.timestamps.start = parseInt(Date.now()) - parseInt(timestamp_start.value)
+        activity.timestamps.start = Date.now() - parseInt(timestamp_start.value)
     }
-    if (timestamp_end_checkbox.checked == true) {
+    if (timestamp_end_checkbox.checked === true) {
         if (!activity.timestamps) {
             activity.timestamps = {}
         }
-        activity.timestamps.end = parseInt(Date.now()) + parseInt(timestamp_end.value)
+        activity.timestamps.end = Date.now() + parseInt(timestamp_end.value)
     }
-    if (assets_large_image_checkbox.checked == true) {
+    if (assets_large_image_checkbox.checked === true) {
         activity.assets = {}
         activity.assets.large_image = assets_large_image.value
-        if (assets_large_text_checkbox.checked == true) {
+        if (assets_large_text_checkbox.checked === true) {
             activity.assets.large_text = assets_large_text.value
         }
     }
-    if (assets_small_image_checkbox.checked == true) {
+    if (assets_small_image_checkbox.checked === true) {
         if (!activity.assets) {
             activity.assets = {}
         }
         activity.assets.small_image = assets_small_image.value
-        if (assets_small_text_checkbox.checked == true) {
+        if (assets_small_text_checkbox.checked === true) {
             activity.assets.small_text = assets_small_text.value
         }
     }
-    if (party_size_checkbox.checked == true) {
+    if (party_size_checkbox.checked === true) {
         activity.party = {}
         activity.party.size = [parseInt(party_size_current.value), parseInt(party_size_maximum.value)]
     }
-    if (button_one_checkbox.checked == true) {
+    if (button_one_checkbox.checked === true) {
         activity.buttons = []
         activity.buttons.push({ label: button_label_one.value, url: button_url_one.value })
     }
-    if (button_two_checkbox.checked == true) {
+    if (button_two_checkbox.checked === true) {
         if (!activity.buttons) {
             activity.buttons = []
         }
@@ -623,7 +620,7 @@ function buildActivity() {
 function loadThisStatus() {
     let profile_name = this.id ? "default/last" : this.value
     let reply = ipc.sendSync("getProfile", profile_name);
-    if (reply.type == "success" && reply.content) {
+    if (reply.type === "success" && reply.content) {
         loadProfile(reply.content)
         notify({
             type: "success",
@@ -631,7 +628,7 @@ function loadThisStatus() {
             delay: 3000
         })
     }
-    else if (reply.type == "error" && reply.message) {
+    else if (reply.type === "error" && reply.message) {
         reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
         notify({
             type: "error",
@@ -647,8 +644,8 @@ function loadProfile(profile) {
         element.value = ""
     })
 
-    inputs = profile.inputs
-    checkboxes = profile.checkboxes
+    let inputs = profile.inputs
+    let checkboxes = profile.checkboxes
 
     fields.forEach(element => {
         if (inputs[element.id]) {
@@ -670,14 +667,14 @@ function loadProfile(profile) {
     button_two_checkbox.checked = typeof checkboxes.button_two_checkbox ? checkboxes.button_two_checkbox : button_two_checkbox.checked
 
     //Turning the inputs on depending on the checkbox state
-    state.disabled = checkboxes.state_checkbox ? false : true
-    details.disabled = checkboxes.details_checkbox ? false : true
-    timestamp_start.disabled = checkboxes.timestamp_start_checkbox ? false : true
-    timestamp_end.disabled = checkboxes.timestamp_end_checkbox ? false : true
+    state.disabled = !checkboxes.state_checkbox
+    details.disabled = !checkboxes.details_checkbox
+    timestamp_start.disabled = !checkboxes.timestamp_start_checkbox
+    timestamp_end.disabled = !checkboxes.timestamp_end_checkbox
     function activateLarge() {
         assets_large_image.disabled = false
         assets_large_text_checkbox.disabled = false
-        assets_large_text.disabled = assets_large_text_checkbox.checked ? false : true
+        assets_large_text.disabled = !assets_large_text_checkbox.checked
     }
     function deactivateLarge() {
         assets_large_image.disabled = true
@@ -688,7 +685,7 @@ function loadProfile(profile) {
     function activateSmall() {
         assets_small_image.disabled = false
         assets_small_text_checkbox.disabled = false
-        assets_small_text.disabled = assets_small_text_checkbox.checked ? false : true
+        assets_small_text.disabled = !assets_small_text_checkbox.checked
     }
     function deactivateSmall() {
         assets_small_image.disabled = true
@@ -696,16 +693,16 @@ function loadProfile(profile) {
         assets_small_text.disabled = true
     }
     assets_small_image_checkbox.checked ? activateSmall() : deactivateSmall()
-    party_size_current.disabled = checkboxes.party_size_checkbox ? false : true
-    party_size_maximum.disabled = checkboxes.party_size_checkbox ? false : true
-    button_label_one.disabled = checkboxes.button_one_checkbox ? false : true
-    button_url_one.disabled = checkboxes.button_one_checkbox ? false : true
-    button_label_two.disabled = checkboxes.button_two_checkbox ? false : true
-    button_url_two.disabled = checkboxes.button_two_checkbox ? false : true
+    party_size_current.disabled = !checkboxes.party_size_checkbox
+    party_size_maximum.disabled = !checkboxes.party_size_checkbox
+    button_label_one.disabled = !checkboxes.button_one_checkbox
+    button_url_one.disabled = !checkboxes.button_one_checkbox
+    button_label_two.disabled = !checkboxes.button_two_checkbox
+    button_url_two.disabled = !checkboxes.button_two_checkbox
 }
 
 function saveProfiles() {
-    let profile = {
+    return {
         inputs: {
             client_id: client_id.value,
             state: state.value,
@@ -737,7 +734,6 @@ function saveProfiles() {
             button_two_checkbox: button_two_checkbox.checked
         }
     }
-    return profile
 }
 
 function rebuildDropdown() {
@@ -767,9 +763,9 @@ function rebuildDropdown() {
 }
 
 function getProfiles() {
-    let package = "Requesting list of all profiles."
-    let reply = ipc.sendSync("getProfiles", package);
-    if (reply.type == "error" && reply.message) {
+    let p = "Requesting list of all profiles."
+    let reply = ipc.sendSync("getProfiles", p);
+    if (reply.type === "error" && reply.message) {
         reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
         notify({
             type: "error",
@@ -795,7 +791,7 @@ function createNewDropdownElement(profile_name) {
 }
 
 function notify(options) {
-    if (options.type == "error" || options.type == "warning" || options.type == "success") {
+    if (options.type === "error" || options.type === "warning" || options.type === "success") {
         if (!options.message) return console.warn("Warning: notify() was missing the message parameter!");
         let delay = 5000
         if (options.delay) {
@@ -863,21 +859,20 @@ function notify(options) {
         }, delay + 250);
     } else {
         console.info("Invalid notification type!")
-        return
     }
 }
 
 function openFolder() {
-    let package = "Request to open the Profiles Folder"
-    let reply = ipc.sendSync("openFolder", package)
-    if (reply.type == "success" && reply.message) {
+    let p = "Request to open the Profiles Folder"
+    let reply = ipc.sendSync("openFolder", p)
+    if (reply.type === "success" && reply.message) {
         notify({
             type: "success",
             message: reply.message,
             delay: 3000
         })
     }
-    else if (reply.type == "error" && reply.message) {
+    else if (reply.type === "error" && reply.message) {
         reply.error ? console.error(reply.error) : console.warn("An error object was supposed to be passed but did do so.");
         notify({
             type: "error",

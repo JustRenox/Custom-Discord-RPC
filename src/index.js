@@ -1,5 +1,4 @@
 const { app, BrowserWindow, Menu, Tray, shell } = require('electron');
-const nativeImage = require('electron').nativeImage;
 const path = require('path');
 const request = require("request");
 const fs = require('fs');
@@ -162,12 +161,12 @@ app.on('ready', () => {
 
 
 
-  ipc.on("getProfiles", (event, package) => {
+  ipc.on("getProfiles", (event) => {
     let returnPackage
     checkForImportantFiles()
     try {
       let profile = fs.readdirSync(path.join(app.getPath("userData") + "/profiles"))
-      content = profile.filter(file => file.endsWith('.json'))
+      let content = profile.filter(file => file.endsWith('.json'))
       returnPackage = {
         type: "success",
         message: `Successfully got the profile names.`,
@@ -184,32 +183,33 @@ app.on('ready', () => {
   })
 
   ipc.on("getProfile", (event, profile_name) => {
-    let package
+    let p
     checkForImportantFiles()
+    let profile;
     try {
       profile = fs.readFileSync(path.join(app.getPath("userData") + `/profiles/${profile_name}.json`), "utf8")
-      profile_name = profile_name == "default/last" ? "Last Profile" : profile_name
-      package = {
+      profile_name = profile_name === "default/last" ? "Last Profile" : profile_name
+      p = {
         type: "success",
         message: `Successfully loaded the selected profile: "${profile_name}"`,
         content: JSON.parse(profile)
       }
     } catch (error) {
-      package = {
+      p = {
         type: "error",
         message: "Couldn't find the profile you were looking for.",
         error: error
       }
     }
-    event.returnValue = package
+    event.returnValue = p
   })
 
-  ipc.on("saveProfile", (event, package) => {
-    let savefileName = package.name
-    let content = package.content
+  ipc.on("saveProfile", (event, p) => {
+    let saveFileName = p.name
+    let content = p.content
     let returnPackage = {}
     checkForImportantFiles()
-    fs.writeFile(app.getPath("userData") + `/profiles/${savefileName}.json`, JSON.stringify(content), (err) => {
+    fs.writeFile(app.getPath("userData") + `/profiles/${saveFileName}.json`, JSON.stringify(content), (err) => {
       if (err) {
         returnPackage = {
           type: "error",
@@ -220,15 +220,15 @@ app.on('ready', () => {
       } else {
         returnPackage = {
           type: "success",
-          message: `Successfully saved the profile: "${savefileName}"`
+          message: `Successfully saved the profile: "${saveFileName}"`
         }
         event.returnValue = returnPackage
       }
     })
   })
 
-  ipc.on("connectRPC", (event, package) => {
-    request(`${discordApiURL}${package.client_id}/rpc`, function (error, res, body) {
+  ipc.on("connectRPC", (event, p) => {
+    request(`${discordApiURL}${p.client_id}/rpc`, function (error, res, body) {
       if (error) {
         console.log(error)
         event.returnValue = {
@@ -239,18 +239,17 @@ app.on('ready', () => {
         return
       }
       body = JSON.parse(body)
-      if (body.message == 'Unknown Application' || body.code == 10002) {
-        anwser = {
+      if (body.message === 'Unknown Application' || body.code === 10002) {
+        event.returnValue = {
           type: "error",
           message: "Unknown application. Please check if you entered the right ClientID.",
         }
-        event.returnValue = anwser
         return
       }
       if (body.name && body.id) {
         try {
-          client.login({ clientId: package.client_id })
-        } catch (error) {
+          client.login({clientId: p.client_id});
+         } catch (error) {
           killClient()
           event.returnValue = {
             type: "error",
@@ -258,22 +257,21 @@ app.on('ready', () => {
             error: error
           }
         }
-        let anwser = null
+        let answer = null
         client.on("disconnected", () => {
           killClient()
-          anwser = {
+          answer = {
             type: "error",
             message: "Connection rejected. Invalid ClientID!",
           }
-          event.returnValue = anwser
-          return
+          event.returnValue = answer
         })
         client.on("ready", () => {
-          anwser = {
+          answer = {
             type: "success",
             message: "Successfully connected to Discord. You can now update the status!",
           }
-          event.returnValue = anwser
+          event.returnValue = answer
           client.addListener("disconnected", () => {
             killClient()
             let message = {
@@ -283,10 +281,9 @@ app.on('ready', () => {
             mainWindow.webContents.send("unexpectedDisconnect", message)
             mainWindow.show()
           })
-          return
         })
         setTimeout(() => {
-          if (anwser == null) {
+          if (answer == null) {
             killClient()
             event.returnValue = {
               type: "error",
@@ -298,11 +295,11 @@ app.on('ready', () => {
     })
   })
 
-  ipc.on("updateActivity", (event, package) => {
+  ipc.on("updateActivity", (event, p) => {
     try {
       client.request('SET_ACTIVITY', {
         pid: process.pid,
-        activity: package.activity
+        activity: p.activity
       });
     } catch (error) {
       event.returnValue = {
@@ -313,23 +310,21 @@ app.on('ready', () => {
       return
     }
     try {
-      fs.writeFile(app.getPath("userData") + `/profiles/default/last.json`, JSON.stringify(package.profile), (error) => {
+      fs.writeFile(app.getPath("userData") + `/profiles/default/last.json`, JSON.stringify(p.profile), (error) => {
         if (error) {
-          returnPackage = {
+          event.returnValue = {
             type: "error",
             message: "There was an error while saving the profile as 'Last Status'",
             error: error
           }
-          event.returnValue = returnPackage
         }
       })
     } catch (error) {
-      returnPackage = {
+      event.returnValue = {
         type: "error",
         message: "There was an error while saving the profile as 'Last Status'",
         error: error
       }
-      event.returnValue = returnPackage
     }
     event.returnValue = {
       type: "success",
@@ -337,7 +332,7 @@ app.on('ready', () => {
     }
   })
 
-  ipc.on("disconnectRPC", (event, package) => {
+  ipc.on("disconnectRPC", (event) => {
 
     try {
       client.destroy().then(() => {
@@ -355,7 +350,7 @@ app.on('ready', () => {
     event.returnValue = {}
   })
 
-  ipc.on("openFolder", (event, package) => {
+  ipc.on("openFolder", (event) => {
     checkForImportantFiles()
     try {
       shell.openPath(path.join(app.getPath("userData") + "/profiles"))

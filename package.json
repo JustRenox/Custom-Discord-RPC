@@ -25,7 +25,7 @@
         "dmg",
         "zip"
       ],
-      "icon": "assets/icons/png/icon_1024x1024.png" 
+      "icon": "assets/icons/png/icon_1024x1024.png"
     },
     "nsis": {
       "installerIcon": "assets/icons/ico/icon_256x256.ico",
