@@ -90,3 +90,4 @@ out/
 
 # electron-builder build output
 dist/
+.idea/
